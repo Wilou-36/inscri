@@ -1,0 +1,221 @@
+{#
+    Template: Étape 1 - Informations personnelles
+    
+    Affiche le formulaire pour la saisie des informations personnelles du candidat:
+    - Identité (nom, prenom, genre, date de naissance)
+    - Nationalité et téléphone  
+    - Adresse postale (adresse, code postal, ville)
+    
+    Fonctionnalités:
+    - Affichage du stepper (progression des étapes)
+    - Validation côté client (HTML5) + serveur (PHP)
+    - Auto-formatage du téléphone en temps réel (JavaScript)
+    - Affichage des messages d'erreur de validation
+    - Redirection vers step2 après validation
+    
+    @author Lycée Fulbert
+    @version 1.0
+#}
+
+{% extends 'base.html.twig' %}
+{% from 'inscription/_stepper.html.twig' import stepper %}
+{% block title %}Étape 1 — Informations personnelles{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
+            <li><a href="{{ path('inscription_step1') }}">Inscription BTS</a></li>
+            <li><span aria-current="page">Informations personnelles</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Inscription BTS — Dossier de candidature</h1>
+        <p class="rf-page-header__sub">Les champs marqués * sont obligatoires. Vos données sont enregistrées à chaque étape.</p>
+    </div>
+</div>
+
+<div class="rf-container--narrow" style="padding-bottom:48px;">
+
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
+        </div>
+    {% endfor %}
+
+    {{ stepper(step, dossier.etapeActuelle) }}
+
+    {{ form_start(form, {attr: {novalidate: 'novalidate', class: 'rf-card'}}) }}
+
+        <div class="rf-card__head">
+            <h1>Informations personnelles</h1>
+            <span style="font-size:12px;color:var(--rf-gris-425);">Sauvegarde automatique</span>
+        </div>
+
+        <div class="rf-card__body">
+
+            {% if form.vars.errors|length > 0 %}
+                <div class="rf-error-banner">
+                    <strong>Erreurs de validation</strong>
+                    <ul>{% for e in form.vars.errors %}<li>{{ e.message }}</li>{% endfor %}</ul>
+                </div>
+            {% endif %}
+
+            <p class="rf-section-title">Identité</p>
+
+            <div class="rf-form-group">
+                <label class="rf-label">Civilité</label>
+                <div class="rf-radio-row">
+                    {% for child in form.genre %}
+                        <label>{{ form_widget(child) }} {{ child.vars.label }}</label>
+                    {% endfor %}
+                </div>
+                <ul class="rf-form-errors">{{ form_errors(form.genre) }}</ul>
+            </div>
+
+            <div class="rf-grid-2">
+                <div class="rf-form-group">
+                    <label class="rf-label">Nom de famille <span class="rf-req">*</span></label>
+                    {{ form_widget(form.nom, {attr: {placeholder: 'DUPONT'}}) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.nom) }}</ul>
+                </div>
+                <div class="rf-form-group">
+                    <label class="rf-label">Prénom <span class="rf-req">*</span></label>
+                    {{ form_widget(form.prenom, {attr: {placeholder: 'Jean-Pierre'}}) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.prenom) }}</ul>
+                </div>
+            </div>
+
+            <div class="rf-grid-2">
+                <div class="rf-form-group">
+                    <label class="rf-label">Date de naissance <span class="rf-req">*</span></label>
+                    {{ form_widget(form.dateNaissance) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.dateNaissance) }}</ul>
+                </div>
+                <div class="rf-form-group">
+                    <label class="rf-label">Nationalité <span class="rf-req">*</span></label>
+                    {{ form_widget(form.nationalite, {attr: {placeholder: 'Française'}}) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.nationalite) }}</ul>
+                </div>
+            </div>
+
+            <div class="rf-form-group" style="max-width:280px;">
+                <label class="rf-label">Téléphone mobile <span class="rf-req">*</span></label>
+                {{ form_widget(form.telephone, {attr: {placeholder: '06 12 34 56 78', id: 'phone-input'}}) }}
+                <ul class="rf-form-errors">{{ form_errors(form.telephone) }}</ul>
+            </div>
+
+            <hr class="rf-divider">
+            <p class="rf-section-title">Adresse postale</p>
+
+            <div class="rf-form-group">
+                <label class="rf-label">Adresse <span class="rf-req">*</span></label>
+                {{ form_widget(form.adresse, {attr: {placeholder: '12 rue de la Paix'}}) }}
+                <ul class="rf-form-errors">{{ form_errors(form.adresse) }}</ul>
+            </div>
+            <div class="rf-grid-2">
+                <div class="rf-form-group">
+                    <label class="rf-label">Code postal <span class="rf-req">*</span></label>
+                    {{ form_widget(form.codePostal, {attr: {placeholder: '28000', maxlength: 5}}) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.codePostal) }}</ul>
+                </div>
+                <div class="rf-form-group">
+                    <label class="rf-label">Ville <span class="rf-req">*</span></label>
+                    {{ form_widget(form.ville, {attr: {placeholder: 'Chartres'}}) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.ville) }}</ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="rf-card__foot">
+            <a href="{{ path('app_dashboard') }}" class="rf-btn rf-btn--secondary">Tableau de bord</a>
+            <span class="rf-spacer"></span>
+            <button type="submit" class="rf-btn rf-btn--primary">Enregistrer et continuer</button>
+        </div>
+
+    {{ form_end(form) }}
+
+</div>
+
+{#
+    ═══════════════════════════════════════════════════════════════
+    SCRIPT: Auto-formatage du téléphone
+    ═══════════════════════════════════════════════════════════════
+    
+    BUT:
+    Formate automatiquement le numéro de téléphone au format:
+    "06 12 34 56 78" (XX XX XX XX XX)
+    
+    FONCTIONNEMENT:
+    1. Extrait uniquement les chiffres (0-9)
+    2. Limite à 10 chiffres maximum
+    3. Ajoute un espace tous les 2 chiffres
+    4. Formate pendant la saisie (événement 'input')
+    5. Formate aussi avant la soumission (événement 'submit')
+    
+    VALIDATION:
+    - Côté client: Format via JavaScript
+    - Côté serveur: Regex PHP: /^[0-9]{2}\s[0-9]{2}\s[0-9]{2}\s[0-9]{2}\s[0-9]{2}$/
+#}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 📱 Récupère le champ téléphone par son ID
+    const phoneInput = document.getElementById('phone-input');
+    
+    // 📋 Récupère le formulaire pour le traitement avant soumission
+    const form = document.querySelector('form');
+    
+    // ⚠️ Quitter si le champ n'existe pas
+    if (!phoneInput) return;
+    
+    /**
+     * Fonction de formatage du téléphone
+     * 
+     * Transforme "0612345678" en "06 12 34 56 78"
+     * 
+     * @param {string} value - Valeur brute du champ
+     * @return {string} Valeur formatée
+     */
+    function formatPhone(value) {
+        // 1️⃣ Extrait UNIQUEMENT les chiffres (supprime tout le reste)
+        let digits = value.replace(/\D/g, '').slice(0, 10);
+        
+        // 2️⃣ Construit la chaîne formatée
+        let formatted = '';
+        for (let i = 0; i < digits.length; i++) {
+            // Ajoute un espace tous les 2 chiffres (sauf avant le premier)
+            if (i > 0 && i % 2 === 0) formatted += ' ';
+            formatted += digits[i];
+        }
+        return formatted;
+    }
+    
+    // 🎯 Formatage pendant la saisie (événement 'input')
+    phoneInput.addEventListener('input', function (e) {
+        e.target.value = formatPhone(e.target.value);
+    });
+    
+    // ✅ Formatage AVANT la soumission du formulaire
+    // ⚠️ CRUCIAL: Garantit que le téléphone est formaté au moment de la validation serveur
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            phoneInput.value = formatPhone(phoneInput.value);
+        });
+    }
+    
+    // 🔄 Formatage au chargement (en cas de pré-remplissage)
+    phoneInput.value = formatPhone(phoneInput.value);
+});
+</script>
+
+{% endblock %}

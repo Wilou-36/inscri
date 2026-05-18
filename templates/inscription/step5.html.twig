@@ -1,0 +1,165 @@
+{# templates/inscription/step5.html.twig #}
+{% extends 'base.html.twig' %}
+{% from 'inscription/_stepper.html.twig' import stepper %}
+{% block title %}Étape 5 — Récapitulatif{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
+            <li><a href="{{ path('inscription_step1') }}">Inscription BTS</a></li>
+            <li><span aria-current="page">Récapitulatif</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Inscription BTS — Récapitulatif</h1>
+        <p class="rf-page-header__sub">Vérifiez l'ensemble des informations avant de soumettre définitivement votre dossier.</p>
+    </div>
+</div>
+
+<div class="rf-container--narrow" style="padding-bottom:48px;">
+
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
+        </div>
+    {% endfor %}
+
+    {{ stepper(step, dossier.etapeActuelle) }}
+
+    {# Alerte pièces manquantes #}
+    {% if piecesManquantes|length > 0 %}
+        <div class="rf-callout rf-callout--warning" style="margin-bottom:20px;">
+            <strong>Pièces obligatoires manquantes :</strong>
+            {% for t in piecesManquantes %}
+                <span class="rf-badge rf-badge--draft" style="margin-left:4px;">
+                    {{ constant('App\\Entity\\PieceJustificative::TYPES')[t] }}
+                </span>
+            {% endfor %}
+            <br>Votre dossier pourra être soumis, mais ces pièces devront être fournies ultérieurement.
+        </div>
+    {% endif %}
+
+    <div class="rf-card">
+        <div class="rf-card__head">
+            <h1>Récapitulatif du dossier</h1>
+            <span class="rf-badge rf-badge--{{ dossier.statut == 'brouillon' ? 'draft' : (dossier.statut == 'soumis' ? 'pending' : (dossier.statut == 'valide' ? 'ok' : 'refused')) }}">
+                {{ dossier.statutLabel }}
+            </span>
+        </div>
+        <div class="rf-card__body">
+
+            {# ── Infos personnelles ── #}
+            <div class="rf-recap-section">
+                <div class="rf-recap-section__head">
+                    <h2>Informations personnelles</h2>
+                    <a href="{{ path('inscription_step1') }}" class="rf-btn rf-btn--secondary rf-btn--sm">Modifier</a>
+                </div>
+                <dl class="rf-recap-dl">
+                    <div><dt>Nom / Prénom</dt><dd>{{ dossier.nom ?? '—' }} {{ dossier.prenom ?? '' }}</dd></div>
+                    <div><dt>Date de naissance</dt><dd>{{ dossier.dateNaissance ? dossier.dateNaissance|date('d/m/Y') : '—' }}</dd></div>
+                    <div><dt>Nationalité</dt><dd>{{ dossier.nationalite ?? '—' }}</dd></div>
+                    <div><dt>Téléphone</dt><dd>{{ dossier.telephone ?? '—' }}</dd></div>
+                    <div class="full"><dt>Adresse</dt><dd>{{ dossier.adresse ?? '—' }}, {{ dossier.codePostal ?? '' }} {{ dossier.ville ?? '' }}</dd></div>
+                </dl>
+            </div>
+
+            {# ── Parcours scolaire ── #}
+            <div class="rf-recap-section">
+                <div class="rf-recap-section__head">
+                    <h2>Parcours scolaire</h2>
+                    <a href="{{ path('inscription_step2') }}" class="rf-btn rf-btn--secondary rf-btn--sm">Modifier</a>
+                </div>
+                <dl class="rf-recap-dl">
+                    <div><dt>Diplôme</dt><dd>{{ dossier.dernierDiplome ?? '—' }}</dd></div>
+                    <div><dt>Spécialité</dt><dd>{{ dossier.specialiteBac ?? '—' }}</dd></div>
+                    <div><dt>Mention</dt><dd>{{ dossier.mentionBac ?? '—' }}</dd></div>
+                    <div><dt>Année</dt><dd>{{ dossier.anneeObtention ?? '—' }}</dd></div>
+                    <div class="full"><dt>Établissement</dt><dd>{{ dossier.etablissementOrigine ?? '—' }}</dd></div>
+                </dl>
+            </div>
+
+            {# ── Choix BTS ── #}
+            <div class="rf-recap-section">
+                <div class="rf-recap-section__head">
+                    <h2>Choix du BTS</h2>
+                    <a href="{{ path('inscription_step3') }}" class="rf-btn rf-btn--secondary rf-btn--sm">Modifier</a>
+                </div>
+                <dl class="rf-recap-dl">
+                    <div><dt>1er vœu</dt><dd><strong>{{ dossier.btsChoisi ?? '—' }}</strong></dd></div>
+                    <div><dt>2e vœu</dt><dd>{{ dossier.btsChoisi2 ?? 'Aucun' }}</dd></div>
+                    <div><dt>Apprentissage</dt><dd>{{ dossier.regimeAppr ? 'Oui' : 'Non' }}</dd></div>
+                    <div class="full">
+                        <dt>Lettre de motivation</dt>
+                        <dd>
+                            <details style="margin-top:4px;">
+                                <summary style="cursor:pointer;font-size:13px;color:var(--rf-bleu);font-weight:700;">
+                                    Afficher ({{ dossier.lettreMotivation|length }} caractères)
+                                </summary>
+                                <p style="margin-top:10px;white-space:pre-wrap;font-size:13.5px;padding:14px;background:var(--rf-gris-50);border-radius:var(--rf-radius);border-left:3px solid var(--rf-bleu-border);line-height:1.7;">{{ dossier.lettreMotivation }}</p>
+                            </details>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+
+            {# ── Pièces justificatives ── #}
+            <div class="rf-recap-section">
+                <div class="rf-recap-section__head">
+                    <h2>Pièces justificatives</h2>
+                    <a href="{{ path('inscription_step4') }}" class="rf-btn rf-btn--secondary rf-btn--sm">Modifier</a>
+                </div>
+                {% if dossier.piecesJustificatives|length > 0 %}
+                    <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;">
+                        {% for piece in dossier.piecesJustificatives %}
+                        <li style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--rf-gris-50);border-radius:var(--rf-radius);font-size:13.5px;border:1px solid var(--rf-gris-200);">
+                            <span class="rf-badge rf-badge--ok">Reçu</span>
+                            <strong>{{ piece.typeLabel }}</strong>
+                            <span style="color:var(--rf-gris-425);font-size:12px;">— {{ piece.nomFichier }} ({{ piece.tailleFormatee }})</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p style="color:var(--rf-gris-425);font-size:14px;">Aucune pièce déposée pour l'instant.</p>
+                {% endif %}
+            </div>
+
+            {# ── Soumission ── #}
+            {% if dossier.peutEtreSoumis %}
+            <div style="background:var(--rf-bleu-clair);border:2px solid var(--rf-bleu-border);border-radius:var(--rf-radius);padding:22px 24px;margin-top:8px;">
+                <h2 style="font-size:1rem;font-weight:700;color:var(--rf-bleu);margin:0 0 8px;">Votre dossier est prêt</h2>
+                <p style="font-size:13.5px;margin:0 0 18px;color:var(--rf-gris-800);line-height:1.6;">
+                    En soumettant votre dossier, vous confirmez l'exactitude des informations fournies.
+                    <strong>Cette action est irréversible.</strong>
+                </p>
+                <form method="post" action="{{ path('inscription_soumettre') }}"
+                      onsubmit="return confirm('Êtes-vous certain(e) de vouloir soumettre votre dossier ? Vous ne pourrez plus le modifier.')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('soumettre_dossier') }}">
+                    <button type="submit" class="rf-btn rf-btn--success">
+                        Soumettre définitivement mon dossier
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="rf-callout rf-callout--warning" style="margin-top:12px;">
+                <strong>Dossier incomplet</strong> — vérifiez les étapes précédentes avant de soumettre.
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="rf-card__foot">
+            <a href="{{ path('inscription_step4') }}" class="rf-btn rf-btn--secondary">Étape précédente</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

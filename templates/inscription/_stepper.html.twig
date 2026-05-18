@@ -1,0 +1,41 @@
+{# templates/inscription/_stepper.html.twig #}
+{% macro stepper(current, reached) %}
+{% set steps = [
+    {n:1, label:'Informations\npersonnelles', route:'inscription_step1'},
+    {n:2, label:'Parcours\nscolaire',         route:'inscription_step2'},
+    {n:3, label:'Choix\ndu BTS',              route:'inscription_step3'},
+    {n:4, label:'Pièces\njointes',            route:'inscription_step4'},
+    {n:5, label:'Récapitulatif',              route:'inscription_step5'},
+] %}
+{% set pct = ((current - 1) / 4 * 100)|round %}
+{% set pct = pct < 0 ? 0 : (pct > 100 ? 100 : pct) %}
+
+<div class="rf-stepper" role="navigation" aria-label="Progression du dossier">
+    <div class="rf-stepper__header">
+        <p class="rf-stepper__title">Étape {{ current }} sur 5</p>
+        <span class="rf-stepper__pct">{{ pct }}&nbsp;%</span>
+    </div>
+    <div class="rf-stepper__track">
+        <div class="rf-stepper__fill" style="width:{{ pct }}%"></div>
+    </div>
+    <div class="rf-stepper__steps">
+        {% for s in steps %}
+            {% set isDone    = reached > s.n %}
+            {% set isCurrent = s.n == current %}
+            {% set isLocked  = reached < s.n %}
+            <div class="rf-stepper__step {{ isDone ? 'is-done' : '' }} {{ isCurrent ? 'is-current' : '' }} {{ isLocked ? 'is-locked' : '' }}"
+                 aria-current="{{ isCurrent ? 'step' : 'false' }}">
+                {% if not isLocked %}
+                    <a href="{{ path(s.route) }}" class="rf-stepper__dot"
+                       title="Étape {{ s.n }}{% if isDone %} — terminée{% elseif isCurrent %} — en cours{% endif %}">
+                        {{ isDone ? '✓' : s.n }}
+                    </a>
+                {% else %}
+                    <span class="rf-stepper__dot">{{ s.n }}</span>
+                {% endif %}
+                <span class="rf-stepper__lbl">{{ s.label|nl2br }}</span>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endmacro %}

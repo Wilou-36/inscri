@@ -1,0 +1,488 @@
+{# templates/legal/cgu.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Conditions Générales d'Utilisation{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li><span aria-current="page">Conditions Générales d'Utilisation</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Conditions Générales d'Utilisation</h1>
+        <p class="rf-page-header__sub">
+            Plateforme d'inscription en ligne BTS — Version en vigueur au {{ "now"|date("d/m/Y") }}
+        </p>
+    </div>
+</div>
+
+<div class="rf-container" style="max-width:820px;padding-bottom:56px;">
+
+    {# Bandeau téléchargement #}
+    <div class="rf-callout" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <span style="flex:1;">
+            <strong>Document complet disponible :</strong>
+            vous pouvez télécharger la version intégrale au format Word.
+        </span>
+        <a href="{{ asset('documents/cgu.docx') }}"
+           class="rf-btn rf-btn--secondary rf-btn--sm"
+           download>
+            Télécharger (.docx)
+        </a>
+    </div>
+
+    {# Sommaire #}
+    <div class="rf-card" style="margin-bottom:20px;">
+        <div class="rf-card__head"><h2>Sommaire</h2></div>
+        <div class="rf-card__body" style="padding:16px 20px;">
+            <ol class="rf-cgu-sommaire">
+                <li><a href="#art1">Objet et champ d'application</a></li>
+                <li><a href="#art2">Définitions</a></li>
+                <li><a href="#art3">Accès à la plateforme</a></li>
+                <li><a href="#art4">Création de compte</a></li>
+                <li><a href="#art5">Processus d'inscription</a></li>
+                <li><a href="#art6">Examen des candidatures</a></li>
+                <li><a href="#art7">Pièces justificatives</a></li>
+                <li><a href="#art8">Protection des données personnelles</a></li>
+                <li><a href="#art9">Responsabilités</a></li>
+                <li><a href="#art10">Propriété intellectuelle</a></li>
+                <li><a href="#art11">Limitation de responsabilité</a></li>
+                <li><a href="#art12">Modification des CGU</a></li>
+                <li><a href="#art13">Acceptation des conditions</a></li>
+                <li><a href="#art14">Droit applicable et juridiction</a></li>
+                <li><a href="#art15">Contact et réclamations</a></li>
+            </ol>
+        </div>
+    </div>
+
+    {# Contenu #}
+    <div class="rf-card">
+        <div class="rf-card__body rf-cgu-body">
+
+            {# ── 1. Objet ── #}
+            <h2 class="rf-cgu-h2" id="art1">1. Objet et champ d'application</h2>
+            <p>
+                Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent l'accès
+                et l'utilisation de la plateforme numérique d'inscription aux formations BTS (Brevet de
+                Technicien Supérieur) mise en œuvre par le <strong>lycée Fulbert</strong>, établissement
+                public d'enseignement secondaire situé Place Billard — 28000 Chartres, relevant de
+                l'Académie d'Orléans-Tours et du Ministère de l'Éducation nationale.
+            </p>
+            <p>
+                En accédant à cette plateforme et en procédant à votre inscription, vous reconnaissez
+                avoir pris connaissance des présentes CGU et vous engagez à les respecter intégralement.
+                Si vous n'acceptez pas ces conditions, vous ne devez pas utiliser la plateforme.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 2. Définitions ── #}
+            <h2 class="rf-cgu-h2" id="art2">2. Définitions</h2>
+            <ul class="rf-cgu-list">
+                <li><strong>Plateforme :</strong> le service numérique d'inscription en ligne aux
+                    formations BTS accessible à l'adresse du lycée Fulbert.</li>
+                <li><strong>Établissement :</strong> le lycée Fulbert, responsable de traitement
+                    et gestionnaire de la plateforme.</li>
+                <li><strong>Utilisateur :</strong> toute personne accédant à la plateforme, qu'elle
+                    soit en phase de consultation ou de candidature.</li>
+                <li><strong>Candidat :</strong> tout utilisateur ayant créé un compte et déposé ou
+                    en cours de dépôt d'un dossier de candidature à une formation BTS.</li>
+                <li><strong>Dossier :</strong> l'ensemble des informations, pièces justificatives
+                    et documents fournis par le candidat dans le cadre de sa demande d'admission.</li>
+                <li><strong>Données personnelles :</strong> toute information permettant d'identifier
+                    directement ou indirectement une personne physique, au sens du RGPD.</li>
+            </ul>
+
+            <hr class="rf-divider">
+
+            {# ── 3. Accès ── #}
+            <h2 class="rf-cgu-h2" id="art3">3. Accès à la plateforme</h2>
+
+            <h3 class="rf-cgu-h3">3.1 Gratuité</h3>
+            <p>
+                L'accès à la plateforme est entièrement gratuit. Aucun frais de dossier ni de
+                traitement n'est perçu dans le cadre de la présente procédure d'inscription.
+            </p>
+
+            <h3 class="rf-cgu-h3">3.2 Disponibilité</h3>
+            <p>
+                L'Établissement s'efforce de maintenir la plateforme accessible 7 jours sur 7 et
+                24 heures sur 24. Il se réserve toutefois le droit d'interrompre l'accès à tout
+                moment, notamment pour des opérations de maintenance, sans que cela ne puisse ouvrir
+                droit à une quelconque indemnité.
+            </p>
+
+            <h3 class="rf-cgu-h3">3.3 Éligibilité</h3>
+            <p>
+                L'utilisation de la plateforme est réservée aux personnes souhaitant candidater
+                à une formation BTS dispensée par le lycée Fulbert. Les candidats mineurs doivent
+                disposer du consentement de leur représentant légal pour soumettre un dossier.
+            </p>
+
+            <h3 class="rf-cgu-h3">3.4 Suspension d'accès</h3>
+            <p>
+                L'Établissement se réserve le droit de suspendre ou de résilier l'accès de tout
+                utilisateur en cas de violation des présentes CGU, de comportement frauduleux ou
+                d'utilisation abusive de la plateforme, sans préavis ni indemnité.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 4. Compte ── #}
+            <h2 class="rf-cgu-h2" id="art4">4. Création et gestion du compte</h2>
+
+            <h3 class="rf-cgu-h3">4.1 Création du compte</h3>
+            <p>
+                L'accès aux fonctionnalités de candidature requiert la création d'un compte personnel
+                à l'aide d'une adresse électronique valide et d'un mot de passe. Chaque candidat ne
+                peut créer qu'un seul compte. Toute tentative de création de comptes multiples peut
+                entraîner la suspension de l'ensemble des comptes concernés.
+            </p>
+
+            <h3 class="rf-cgu-h3">4.2 Sécurité des identifiants</h3>
+            <p>
+                Vous êtes seul responsable de la confidentialité de vos identifiants de connexion.
+                Vous vous engagez à ne pas les communiquer à des tiers et à notifier immédiatement
+                l'Établissement à l'adresse
+                <a href="mailto:scolarite@lycee-fulbert.fr">scolarite@lycee-fulbert.fr</a>
+                en cas d'utilisation non autorisée de votre compte.
+            </p>
+
+            <h3 class="rf-cgu-h3">4.3 Exactitude des informations</h3>
+            <p>
+                Vous garantissez que les informations renseignées lors de la création de votre compte
+                sont exactes, complètes et à jour. Toute fausse déclaration est susceptible d'entraîner
+                la résiliation immédiate du compte et le rejet de la candidature associée.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 5. Processus d'inscription ── #}
+            <h2 class="rf-cgu-h2" id="art5">5. Processus d'inscription</h2>
+
+            <h3 class="rf-cgu-h3">5.1 Étapes du dossier</h3>
+            <p>La procédure d'inscription se déroule en cinq étapes successives :</p>
+            <ul class="rf-cgu-list">
+                <li>Étape 1 — Informations personnelles</li>
+                <li>Étape 2 — Parcours scolaire</li>
+                <li>Étape 3 — Choix du BTS et lettre de motivation</li>
+                <li>Étape 4 — Dépôt des pièces justificatives</li>
+                <li>Étape 5 — Récapitulatif et soumission définitive</li>
+            </ul>
+            <p>
+                Le dossier est sauvegardé automatiquement à chaque étape et peut être repris
+                ultérieurement jusqu'à sa soumission définitive.
+            </p>
+
+            <h3 class="rf-cgu-h3">5.2 Informations requises</h3>
+            <p>
+                Vous vous engagez à fournir des informations complètes, exactes et sincères.
+                Toute fausse déclaration, omission volontaire ou présentation de documents falsifiés
+                constitue une fraude susceptible d'entraîner l'annulation de la candidature et des
+                poursuites pénales sur le fondement des articles 441-1 et suivants du Code pénal.
+            </p>
+
+            <h3 class="rf-cgu-h3">5.3 Délais de candidature</h3>
+            <p>
+                Les candidatures doivent être soumises avant la date de clôture fixée par
+                l'Établissement et publiée sur la plateforme. Aucun dossier incomplet ou soumis
+                hors délai ne pourra être pris en compte, sauf circonstances exceptionnelles
+                appréciées discrétionnairement par l'Établissement.
+            </p>
+
+            <div class="rf-callout" style="font-size:13.5px;margin-top:12px;">
+                <strong>Dates de la campagne {{ "now"|date("Y") }}&nbsp;:</strong>
+                ouverture le 1<sup>er</sup> février — clôture le 30 avril.
+            </div>
+
+            <h3 class="rf-cgu-h3">5.4 Soumission définitive</h3>
+            <p>
+                La soumission définitive du dossier est irréversible. Une fois validée, aucune
+                modification n'est possible. Il vous appartient de vérifier l'intégralité de votre
+                dossier avant de le soumettre.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 6. Examen ── #}
+            <h2 class="rf-cgu-h2" id="art6">6. Examen des candidatures</h2>
+
+            <h3 class="rf-cgu-h3">6.1 Traitement des dossiers</h3>
+            <p>
+                Chaque dossier est instruit selon les critères de sélection définis par l'équipe
+                pédagogique de la formation concernée, conformément à la réglementation nationale
+                en vigueur relative à l'admission en BTS. La décision d'admission relève de
+                l'entière appréciation de l'Établissement.
+            </p>
+
+            <h3 class="rf-cgu-h3">6.2 Notification</h3>
+            <p>
+                Le résultat de l'examen de votre candidature vous sera communiqué par voie
+                électronique à l'adresse indiquée lors de la création de votre compte, dans les
+                délais compatibles avec le calendrier administratif de l'Établissement.
+            </p>
+
+            <h3 class="rf-cgu-h3">6.3 Caractère définitif des décisions</h3>
+            <p>
+                Les décisions d'admission ou de refus sont définitives. Elles ne peuvent faire
+                l'objet d'aucun recours auprès de l'Établissement. Le candidat peut toutefois
+                exercer les voies de recours administratives ou juridictionnelles de droit commun
+                prévues par la législation française.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 7. Pièces justificatives ── #}
+            <h2 class="rf-cgu-h2" id="art7">7. Pièces justificatives</h2>
+
+            <h3 class="rf-cgu-h3">7.1 Authenticité des documents</h3>
+            <p>
+                Vous garantissez que tous les documents déposés sont authentiques, en cours de
+                validité et vous appartiennent. L'Établissement se réserve le droit de demander
+                la présentation des originaux ou des copies certifiées conformes avant toute
+                inscription définitive. La présentation d'un document falsifié constitue une
+                infraction pénale.
+            </p>
+
+            <h3 class="rf-cgu-h3">7.2 Formats acceptés</h3>
+            <p>
+                Les pièces justificatives doivent être déposées au format PDF, JPG ou PNG,
+                dans une limite de <strong>5 Mo par fichier</strong>. Les documents illisibles
+                ou de qualité insuffisante pourront être rejetés.
+            </p>
+
+            <h3 class="rf-cgu-h3">7.3 Conservation</h3>
+            <p>
+                Les pièces justificatives sont conservées conformément aux dispositions de la
+                <a href="{{ path('app_privacy') }}">Politique de confidentialité</a>
+                de l'Établissement, pour la durée nécessaire au traitement de la candidature et
+                aux obligations légales de conservation.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 8. Données personnelles ── #}
+            <h2 class="rf-cgu-h2" id="art8">8. Protection des données personnelles</h2>
+
+            <h3 class="rf-cgu-h3">8.1 Conformité RGPD</h3>
+            <p>
+                Le traitement de vos données personnelles est effectué conformément au Règlement
+                Général sur la Protection des Données (RGPD — Règlement UE 2016/679) et à la
+                loi n°&nbsp;78-17 du 6 janvier 1978 modifiée. Le lycée Fulbert est responsable
+                du traitement au sens de l'article 4 du RGPD.
+            </p>
+
+            <h3 class="rf-cgu-h3">8.2 Politique de confidentialité</h3>
+            <p>
+                Les modalités détaillées de collecte, d'utilisation, de conservation et de
+                protection de vos données personnelles sont décrites dans notre
+                <a href="{{ path('app_privacy') }}">Politique de confidentialité</a>,
+                qui fait partie intégrante des présentes CGU.
+            </p>
+
+            <h3 class="rf-cgu-h3">8.3 Droits des candidats</h3>
+            <p>
+                Conformément au RGPD, vous disposez d'un droit d'accès, de rectification,
+                d'effacement, de limitation, d'opposition et de portabilité de vos données.
+                Pour exercer ces droits, adressez votre demande à
+                <a href="mailto:scolarite@lycee-fulbert.fr">scolarite@lycee-fulbert.fr</a>.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 9. Responsabilités ── #}
+            <h2 class="rf-cgu-h2" id="art9">9. Responsabilités</h2>
+
+            <h3 class="rf-cgu-h3">9.1 Responsabilité de l'Établissement</h3>
+            <p>
+                L'Établissement s'engage à mettre en œuvre tous les moyens raisonnables pour
+                assurer la disponibilité, la sécurité et le bon fonctionnement de la plateforme.
+                En cas de perte de données due à une défaillance technique non imputable au
+                candidat, l'Établissement s'engage à permettre la reconstitution du dossier
+                dans les meilleurs délais.
+            </p>
+
+            <h3 class="rf-cgu-h3">9.2 Responsabilité du candidat</h3>
+            <p>Le candidat est responsable :</p>
+            <ul class="rf-cgu-list">
+                <li>de l'exactitude et de la sincérité de toutes les informations fournies ;</li>
+                <li>de la confidentialité de ses identifiants de connexion ;</li>
+                <li>de la notification immédiate de tout accès non autorisé à son compte ;</li>
+                <li>du respect des présentes CGU et de toute réglementation applicable ;</li>
+                <li>de ne pas utiliser la plateforme à des fins illicites, frauduleuses ou
+                    contraires à l'ordre public.</li>
+            </ul>
+
+            <hr class="rf-divider">
+
+            {# ── 10. Propriété intellectuelle ── #}
+            <h2 class="rf-cgu-h2" id="art10">10. Propriété intellectuelle</h2>
+            <p>
+                L'ensemble des éléments constituant la plateforme (structure, textes, graphismes,
+                code source, logos, marques) est la propriété exclusive du lycée Fulbert ou de
+                ses concédants. Toute reproduction, représentation, modification, publication ou
+                adaptation de tout ou partie de ces éléments, par quelque procédé que ce soit,
+                sans l'autorisation écrite préalable de l'Établissement, est strictement interdite
+                et constitue une contrefaçon sanctionnée par le Code de la propriété intellectuelle.
+            </p>
+            <p>
+                En soumettant votre dossier, vous accordez à l'Établissement une licence non
+                exclusive d'utilisation des documents fournis, limitée aux seules finalités de
+                traitement de votre candidature.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 11. Limitation de responsabilité ── #}
+            <h2 class="rf-cgu-h2" id="art11">11. Limitation de responsabilité</h2>
+            <p>L'Établissement ne saurait être tenu responsable :</p>
+            <ul class="rf-cgu-list">
+                <li>des interruptions ou dysfonctionnements de la plateforme indépendants
+                    de sa volonté (panne réseau, acte malveillant de tiers, force majeure) ;</li>
+                <li>de la perte de données résultant de causes extérieures à la plateforme ;</li>
+                <li>de l'utilisation frauduleuse ou abusive de la plateforme par des tiers ;</li>
+                <li>des dommages indirects résultant de l'utilisation ou de l'impossibilité
+                    d'utilisation de la plateforme.</li>
+            </ul>
+            <p>
+                La responsabilité de l'Établissement ne pourra en aucun cas excéder le préjudice
+                direct et prévisible subi par l'utilisateur du fait d'un manquement avéré de sa part.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 12. Modification CGU ── #}
+            <h2 class="rf-cgu-h2" id="art12">12. Modification des CGU</h2>
+            <p>
+                L'Établissement se réserve le droit de modifier les présentes CGU à tout moment
+                afin de les adapter à l'évolution de la réglementation ou de la plateforme.
+                Les utilisateurs seront informés de toute modification substantielle par courriel
+                au moins <strong>30 jours avant l'entrée en vigueur</strong> des nouvelles
+                dispositions.
+            </p>
+            <p>
+                La version en vigueur est celle accessible sur la plateforme au moment de
+                l'utilisation. La date de dernière mise à jour est indiquée en bas de page.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 13. Acceptation ── #}
+            <h2 class="rf-cgu-h2" id="art13">13. Acceptation des conditions</h2>
+            <p>
+                En cochant la case « J'ai lu et j'accepte les conditions générales d'utilisation »
+                lors de la création de votre compte, vous reconnaissez avoir lu, compris et
+                accepté sans réserve l'intégralité des présentes CGU ainsi que la
+                <a href="{{ path('app_privacy') }}">Politique de confidentialité</a>
+                de l'Établissement.
+            </p>
+            <p>
+                Cette acceptation a valeur contractuelle et engage le candidat dès la validation
+                du formulaire de création de compte.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 14. Droit applicable ── #}
+            <h2 class="rf-cgu-h2" id="art14">14. Droit applicable et juridiction</h2>
+            <p>
+                Les présentes CGU sont régies exclusivement par le droit français. Tout litige
+                relatif à leur interprétation, leur validité ou leur exécution, qui ne pourrait
+                être réglé à l'amiable, sera soumis à la compétence exclusive des juridictions
+                administratives ou judiciaires françaises compétentes, selon la nature du litige.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 15. Contact ── #}
+            <h2 class="rf-cgu-h2" id="art15">15. Contact et réclamations</h2>
+            <p>
+                Pour toute question relative aux présentes CGU, ou pour exercer vos droits,
+                veuillez contacter le service de la scolarité :
+            </p>
+            <div class="rf-callout" style="margin-top:12px;font-size:13.5px;">
+                <strong>Lycée Fulbert — Service scolarité</strong><br>
+                Place Billard — 28000 Chartres<br>
+                <a href="mailto:scolarite@lycee-fulbert.fr">scolarite@lycee-fulbert.fr</a>
+                &nbsp;—&nbsp; 02&nbsp;37&nbsp;91&nbsp;40&nbsp;00
+            </div>
+
+        </div>
+
+        <div class="rf-card__foot" style="font-size:12px;color:var(--rf-gris-425);flex-wrap:wrap;gap:8px;">
+            <span>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</span>
+            <span class="rf-spacer"></span>
+            <a href="{{ path('app_register') }}" class="rf-btn rf-btn--secondary rf-btn--sm">
+                ← Retour à la création de compte
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.rf-cgu-h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--rf-bleu);
+    margin: 32px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--rf-bleu-border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    scroll-margin-top: 80px;
+}
+.rf-cgu-h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 16px;
+    background: var(--rf-bleu);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.rf-cgu-h3 {
+    font-size: .875rem;
+    font-weight: 700;
+    color: var(--rf-gris-800);
+    margin: 20px 0 8px;
+}
+.rf-cgu-body {
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--rf-gris-800);
+}
+.rf-cgu-body p { margin: 0 0 12px; }
+.rf-cgu-list {
+    margin: 0 0 12px 0;
+    padding-left: 22px;
+    color: var(--rf-gris-800);
+}
+.rf-cgu-list li { margin-bottom: 6px; }
+.rf-cgu-sommaire {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 13.5px;
+    line-height: 1.9;
+    columns: 2;
+    column-gap: 24px;
+}
+.rf-cgu-sommaire li { margin-bottom: 2px; }
+.rf-cgu-sommaire a {
+    color: var(--rf-bleu);
+    text-decoration: none;
+}
+.rf-cgu-sommaire a:hover { text-decoration: underline; }
+@media (max-width: 600px) { .rf-cgu-sommaire { columns: 1; } }
+</style>
+
+{% endblock %}

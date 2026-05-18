@@ -1,0 +1,145 @@
+{# templates/security/register.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Créer un compte{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li><span aria-current="page">Créer un compte</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Créer votre compte</h1>
+        <p class="rf-page-header__sub">Pour accéder au formulaire d'inscription BTS du lycée Fulbert.</p>
+    </div>
+</div>
+
+<div class="rf-container" style="max-width:540px;padding-bottom:56px;">
+
+    <div class="rf-card">
+        <div class="rf-card__head">
+            <h2>Création de compte</h2>
+            <span style="font-size:12px;color:var(--rf-gris-425);">Les champs * sont obligatoires</span>
+        </div>
+
+        <div class="rf-card__body">
+
+            {{ form_start(registrationForm, {attr: {novalidate: 'novalidate'}}) }}
+
+            {# ── Email ── #}
+            <div class="rf-form-group">
+                <label class="rf-label" for="{{ registrationForm.email.vars.id }}">
+                    Adresse e-mail <span class="rf-req">*</span>
+                </label>
+                {{ form_widget(registrationForm.email, {attr: {placeholder: 'votre@email.fr', autofocus: true}}) }}
+                <ul class="rf-form-errors">{{ form_errors(registrationForm.email) }}</ul>
+            </div>
+
+            {# ── Mot de passe ── #}
+            <div class="rf-form-group">
+                <label class="rf-label">Mot de passe <span class="rf-req">*</span></label>
+                {{ form_widget(registrationForm.plainPassword.first, {attr: {placeholder: 'Minimum 8 caractères'}}) }}
+                <ul class="rf-form-errors">{{ form_errors(registrationForm.plainPassword.first) }}</ul>
+                <p class="rf-help-text">Au moins 8 caractères, une majuscule et un chiffre.</p>
+
+                {# Barre de force #}
+                <div id="strength-wrap" style="margin-top:10px;display:none;">
+                    <div style="background:var(--rf-gris-200);border-radius:2px;height:5px;overflow:hidden;margin-bottom:5px;">
+                        <div id="strength-bar" style="height:100%;width:0;border-radius:2px;transition:width .3s,background .3s;"></div>
+                    </div>
+                    <span id="strength-txt" style="font-size:12px;font-weight:700;"></span>
+                </div>
+            </div>
+
+            {# ── Confirmation ── #}
+            <div class="rf-form-group">
+                <label class="rf-label">Confirmer le mot de passe <span class="rf-req">*</span></label>
+                {{ form_widget(registrationForm.plainPassword.second, {attr: {placeholder: 'Retapez votre mot de passe'}}) }}
+                <ul class="rf-form-errors">{{ form_errors(registrationForm.plainPassword.second) }}</ul>
+            </div>
+
+            <hr class="rf-divider">
+
+            {# ── CGU ── #}
+            <div class="rf-form-group rf-check">
+                <label>
+                    {{ form_widget(registrationForm.acceptCgu) }}
+                    <span>
+                        J'ai lu et j'accepte les
+                        <a href="{{ path('app_cgu') }}">conditions générales d'utilisation</a>
+                        et la <a href="{{ path('app_privacy') }}">politique de confidentialité</a>. <span class="rf-req">*</span>
+                    </span>
+                </label>
+                <ul class="rf-form-errors">{{ form_errors(registrationForm.acceptCgu) }}</ul>
+            </div>
+
+            <button type="submit" class="rf-btn rf-btn--primary" style="width:100%;justify-content:center;margin-top:4px;">
+                Créer mon compte
+            </button>
+
+            {{ form_end(registrationForm) }}
+
+        </div>
+
+        <div class="rf-card__foot" style="justify-content:center;">
+            <a href="{{ path('app_login') }}" style="font-size:14px;color:var(--rf-bleu);">
+                Déjà un compte ? <strong>Se connecter</strong>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}{{ parent() }}
+<script>
+(function () {
+    const inp  = document.querySelector('[autocomplete="new-password"]');
+    const wrap = document.getElementById('strength-wrap');
+    const bar  = document.getElementById('strength-bar');
+    const txt  = document.getElementById('strength-txt');
+    if (!inp) return;
+
+    const niveaux = [
+        { min:0, max:2, color:'#c1002a', label:'Trop faible', w:'15%' },
+        { min:3, max:3, color:'#b34000', label:'Faible',      w:'35%' },
+        { min:4, max:4, color:'#6b5c00', label:'Moyen',       w:'60%' },
+        { min:5, max:5, color:'#18753c', label:'Fort',        w:'80%' },
+        { min:6, max:9, color:'#0f5c2e', label:'Très fort',   w:'100%'},
+    ];
+
+    function score(p) {
+        let s = 0;
+        if (p.length >= 8)           s++;
+        if (p.length >= 12)          s++;
+        if (/[A-Z]/.test(p))         s++;
+        if (/[a-z]/.test(p))         s++;
+        if (/\d/.test(p))            s++;
+        if (/[^A-Za-z\d]/.test(p))   s++;
+        return s;
+    }
+
+    inp.addEventListener('input', function () {
+        const v = this.value;
+        wrap.style.display = v ? 'block' : 'none';
+        if (!v) return;
+        const s = score(v);
+        const n = niveaux.find(l => s >= l.min && s <= l.max) || niveaux[0];
+        bar.style.width      = n.w;
+        bar.style.background = n.color;
+        txt.textContent      = n.label;
+        txt.style.color      = n.color;
+    });
+}());
+</script>
+{% endblock %}

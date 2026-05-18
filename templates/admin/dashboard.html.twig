@@ -1,0 +1,188 @@
+{# templates/admin/dashboard.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Administration — Tableau de bord{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
+            <li><span aria-current="page">Administration</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Tableau de bord administrateur</h1>
+        <p class="rf-page-header__sub">Gestion des inscriptions BTS — campagne {{ "now"|date("Y") }}</p>
+    </div>
+</div>
+
+<div class="rf-container" style="padding-bottom:48px;">
+
+    {# Flash messages #}
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
+        </div>
+    {% endfor %}
+
+    {# ── Barre d'actions ── #}
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+        <a href="{{ path('admin_export_csv') }}" class="rf-btn rf-btn--secondary">
+            Exporter en CSV
+        </a>
+        <a href="{{ path('admin_candidats') }}" class="rf-btn rf-btn--primary">
+            Tous les dossiers
+        </a>
+    </div>
+
+    {# ── Statistiques ── #}
+    <div class="rf-stat-grid">
+        <div class="rf-stat-card rf-stat-card--bleu">
+            <span class="rf-stat-card__val">{{ stats.total }}</span>
+            <span class="rf-stat-card__lbl">Dossiers total</span>
+        </div>
+        <div class="rf-stat-card rf-stat-card--orange">
+            <span class="rf-stat-card__val">{{ stats.brouillon }}</span>
+            <span class="rf-stat-card__lbl">En cours</span>
+        </div>
+        <div class="rf-stat-card rf-stat-card--bleu-ciel">
+            <span class="rf-stat-card__val">{{ stats.soumis }}</span>
+            <span class="rf-stat-card__lbl">Soumis — à traiter</span>
+        </div>
+        <div class="rf-stat-card rf-stat-card--vert">
+            <span class="rf-stat-card__val">{{ stats.valide }}</span>
+            <span class="rf-stat-card__lbl">Validés</span>
+        </div>
+        <div class="rf-stat-card rf-stat-card--rouge">
+            <span class="rf-stat-card__val">{{ stats.refuse }}</span>
+            <span class="rf-stat-card__lbl">Refusés</span>
+        </div>
+        <div class="rf-stat-card rf-stat-card--violet">
+            <span class="rf-stat-card__val">{{ nbUsers }}</span>
+            <span class="rf-stat-card__lbl">Comptes créés</span>
+        </div>
+    </div>
+
+    {# ── Graphiques / listes ── #}
+    <div class="rf-layout-2col">
+
+        {# Répartition BTS #}
+        <div class="rf-card">
+            <div class="rf-card__head"><h2>Répartition par BTS</h2></div>
+            <div class="rf-card__body" style="padding:0;">
+                {% if stats.par_bts|length > 0 %}
+                    {% set mx = stats.par_bts|map(r => r.nb)|max %}
+                    {% for row in stats.par_bts %}
+                    <div style="padding:14px 20px;border-bottom:1px solid var(--rf-gris-200);">
+                        <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px;">
+                            <strong>{{ row.bts }}</strong>
+                            <span style="color:var(--rf-gris-425);">{{ row.nb }} dossier{{ row.nb > 1 ? 's' }}</span>
+                        </div>
+                        <div class="rf-progress__track">
+                            <div class="rf-progress__fill" style="width:{{ (row.nb / mx * 100)|round }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="padding:24px;color:var(--rf-gris-425);text-align:center;font-size:14px;">
+                        Aucune donnée disponible.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Dernières inscriptions #}
+        <div class="rf-card">
+            <div class="rf-card__head">
+                <h2>Dernières inscriptions (7&nbsp;j)</h2>
+                <a href="{{ path('admin_candidats') }}" style="font-size:12.5px;color:var(--rf-bleu);">
+                    Voir tout →
+                </a>
+            </div>
+            <div class="rf-card__body" style="padding:0;">
+                {% if recents|length > 0 %}
+                    {% for d in recents %}
+                    <a href="{{ path('admin_dossier_show', {id: d.id}) }}"
+                       class="rf-admin-row">
+                        <div>
+                            <p class="rf-admin-row__name">
+                                {{ d.nom ?? '—' }} {{ d.prenom ?? '' }}
+                            </p>
+                            <p class="rf-admin-row__email">{{ d.user.email }}</p>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0;">
+                            <span class="rf-badge rf-badge--{{ d.statut == 'brouillon' ? 'draft' : (d.statut == 'soumis' ? 'pending' : (d.statut == 'valide' ? 'ok' : 'refused')) }}">
+                                {{ d.statutLabel }}
+                            </span>
+                            <p style="font-size:11px;color:var(--rf-gris-425);margin-top:3px;">
+                                {{ d.createdAt|date('d/m/Y') }}
+                            </p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <p style="padding:24px;color:var(--rf-gris-425);text-align:center;font-size:14px;">
+                        Aucune inscription cette semaine.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+/* ── Stat cards ────────────────────────────────────────────────────────────── */
+.rf-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+@media (max-width: 860px) { .rf-stat-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .rf-stat-grid { grid-template-columns: 1fr; } }
+
+.rf-stat-card {
+    border-radius: var(--rf-radius);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid transparent;
+}
+.rf-stat-card__val { font-size: 2rem; font-weight: 800; line-height: 1; }
+.rf-stat-card__lbl { font-size: 12.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+
+.rf-stat-card--bleu       { background: var(--rf-bleu-clair); border-color: var(--rf-bleu-border); color: var(--rf-bleu); }
+.rf-stat-card--orange     { background: var(--rf-orange-clair); border-color: #f4c49a; color: var(--rf-orange); }
+.rf-stat-card--bleu-ciel  { background: #e0f2fe; border-color: #bae6fd; color: #0369a1; }
+.rf-stat-card--vert       { background: var(--rf-vert-clair); border-color: #a5e7be; color: var(--rf-vert); }
+.rf-stat-card--rouge      { background: #ffe9e9; border-color: #ffb3b3; color: #c0000a; }
+.rf-stat-card--violet     { background: #f3e8ff; border-color: #d8b4fe; color: #6b21a8; }
+
+/* ── Ligne liste récente ───────────────────────────────────────────────────── */
+.rf-admin-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--rf-gris-200);
+    text-decoration: none;
+    color: inherit;
+    transition: background .12s;
+}
+.rf-admin-row:last-child { border-bottom: none; }
+.rf-admin-row:hover { background: var(--rf-gris-50); }
+.rf-admin-row__name  { font-size: 13.5px; font-weight: 700; margin: 0 0 2px; color: var(--rf-gris-900); }
+.rf-admin-row__email { font-size: 11.5px; color: var(--rf-gris-425); margin: 0; }
+</style>
+
+{% endblock %}

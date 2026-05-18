@@ -1,0 +1,196 @@
+{# templates/dashboard/index.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Mon espace{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><span aria-current="page">Mon espace</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Bonjour{% if dossierActif and dossierActif.prenom %},&nbsp;{{ dossierActif.prenom }}{% endif %}</h1>
+        <p class="rf-page-header__sub">Espace personnel d'inscription BTS — suivez et complétez votre dossier.</p>
+    </div>
+</div>
+
+<div class="rf-container" style="padding-bottom:48px;">
+
+    {# Flash messages #}
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}
+                <div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <div class="rf-layout-2col">
+
+        {# ── Colonne principale ── #}
+        <div>
+
+            {% if dossierActif %}
+            <div class="rf-card">
+                <div class="rf-card__head">
+                    <h2>Mon dossier en cours</h2>
+                    <span class="rf-badge rf-badge--{{ dossierActif.statut == 'brouillon' ? 'draft' : (dossierActif.statut == 'soumis' ? 'pending' : (dossierActif.statut == 'valide' ? 'ok' : 'refused')) }}">
+                        {{ dossierActif.statutLabel }}
+                    </span>
+                </div>
+                <div class="rf-card__body">
+
+                    <div class="rf-progress__labels">
+                        <span>Progression du dossier</span>
+                        <strong>Étape {{ dossierActif.etapeActuelle }}&thinsp;/&thinsp;5 &mdash; {{ dossierActif.progression }}&nbsp;%</strong>
+                    </div>
+                    <div class="rf-progress__track">
+                        <div class="rf-progress__fill" style="width:{{ dossierActif.progression }}%"></div>
+                    </div>
+
+                    {% set etapesInfo = [
+                        {n:1, label:'Informations personnelles', route:'inscription_step1'},
+                        {n:2, label:'Parcours scolaire',         route:'inscription_step2'},
+                        {n:3, label:'Choix du BTS',              route:'inscription_step3'},
+                        {n:4, label:'Pièces justificatives',     route:'inscription_step4'},
+                        {n:5, label:'Récapitulatif',             route:'inscription_step5'},
+                    ] %}
+                    <ul class="rf-steps">
+                    {% for e in etapesInfo %}
+                        {% set done   = dossierActif.etapeActuelle > e.n %}
+                        {% set curr   = dossierActif.etapeActuelle == e.n %}
+                        {% set locked = dossierActif.etapeActuelle < e.n %}
+                        <li class="rf-step rf-step--{{ done ? 'done' : (curr ? 'current' : 'locked') }}">
+                            <span class="rf-step__num">{{ done ? '✓' : e.n }}</span>
+                            <span class="rf-step__label">{{ e.label }}</span>
+                            {% if done %}
+                                <a href="{{ path(e.route) }}" class="rf-btn rf-btn--secondary rf-btn--sm">Modifier</a>
+                            {% elseif curr %}
+                                <a href="{{ path(e.route) }}" class="rf-btn rf-btn--primary rf-btn--sm">Continuer</a>
+                            {% else %}
+                                <span style="font-size:12px;color:var(--rf-gris-425);">Verrouillé</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+
+                </div>
+                <div class="rf-card__foot">
+                    <a href="{{ path('inscription_step' ~ dossierActif.etapeActuelle) }}" class="rf-btn rf-btn--primary">
+                        {% if dossierActif.etapeActuelle >= 5 %}Voir le récapitulatif{% else %}Reprendre à l'étape {{ dossierActif.etapeActuelle }}{% endif %}
+                    </a>
+                    <span class="rf-spacer"></span>
+                    <span style="font-size:12px;color:var(--rf-gris-425);">
+                        Mise à jour le {{ dossierActif.updatedAt|date('d/m/Y à H:i') }}
+                    </span>
+                </div>
+            </div>
+
+            {% else %}
+
+            <div class="rf-card">
+                <div style="text-align:center;padding:48px 32px;">
+                    <div style="width:72px;height:72px;border-radius:50%;background:var(--rf-bleu-clair);border:3px solid var(--rf-bleu-border);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;">📋</div>
+                    <h2 style="font-size:1.125rem;font-weight:700;color:var(--rf-gris-900);margin:0 0 10px;">Démarrer votre inscription</h2>
+                    <p style="color:var(--rf-gris-625);font-size:14px;max-width:400px;margin:0 auto 24px;line-height:1.6;">
+                        Vous n'avez pas encore de dossier en cours.
+                        Le processus prend environ <strong>10 à 15&nbsp;minutes</strong> et peut être repris à tout moment.
+                    </p>
+                    <a href="{{ path('inscription_step1') }}" class="rf-btn rf-btn--primary">
+                        Commencer ma demande d'admission
+                    </a>
+                </div>
+            </div>
+
+            {% endif %}
+
+            {# Historique #}
+            {% set termines = dossiers|filter(d => d.statut != 'brouillon') %}
+            {% if termines|length > 0 %}
+            <div class="rf-card">
+                <div class="rf-card__head"><h2>Historique des dossiers</h2></div>
+                <div class="rf-card__body" style="padding:0;">
+                    <table class="rf-table">
+                        <thead><tr>
+                            <th>Formation demandée</th>
+                            <th>Date de soumission</th>
+                            <th>Statut</th>
+                        </tr></thead>
+                        <tbody>
+                        {% for d in termines %}
+                            <tr>
+                                <td><strong>{{ d.btsChoisi ?? '—' }}</strong></td>
+                                <td style="color:var(--rf-gris-425);font-size:12.5px;">{{ d.soumisAt ? d.soumisAt|date('d/m/Y') : '—' }}</td>
+                                <td>
+                                    <span class="rf-badge rf-badge--{{ d.statut == 'valide' ? 'ok' : (d.statut == 'refuse' ? 'refused' : 'pending') }}">
+                                        {{ d.statutLabel }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        {# ── Sidebar ── #}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+            <div class="rf-card">
+                <div class="rf-card__head"><h2>Votre compte</h2></div>
+                <div class="rf-card__body" style="padding:16px 20px;">
+                    <p style="font-size:13px;color:var(--rf-gris-800);margin:0 0 10px;word-break:break-word;">{{ app.user.email }}</p>
+                    {% if not app.user.verified %}
+                        <span class="rf-account-pill">
+                            <span class="rf-account-pill__dot rf-account-pill__dot--warning"></span>
+                            Adresse e-mail non vérifiée
+                        </span>
+                    {% else %}
+                        <span class="rf-account-pill">
+                            <span class="rf-account-pill__dot rf-account-pill__dot--ok"></span>
+                            Adresse e-mail vérifiée
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="rf-card">
+                <div class="rf-card__head"><h2>Informations pratiques</h2></div>
+                <div class="rf-card__body" style="padding:20px;">
+                    <div class="rf-info-item">
+                        <p class="rf-info-item__title">Dates de la campagne</p>
+                        <p>Ouverture&nbsp;: 1<sup>er</sup> février 2025<br>Clôture&nbsp;: 30 avril 2025</p>
+                    </div>
+                    <div class="rf-info-item">
+                        <p class="rf-info-item__title">Pièces obligatoires</p>
+                        <p>Carte nationale d'identité (recto/verso)<br>Photo d'identité récente<br>Relevé de notes — Terminale<br>Diplôme du baccalauréat</p>
+                    </div>
+                    <div class="rf-info-item">
+                        <p class="rf-info-item__title">Contact scolarité</p>
+                        <p><a href="mailto:scolarite@lycee-fulbert.fr">scolarite@lycee-fulbert.fr</a><br>02&nbsp;37&nbsp;91&nbsp;40&nbsp;00</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rf-callout">
+                <strong>Conseil&nbsp;:</strong> Préparez vos documents avant de commencer.
+                Formats acceptés&nbsp;: PDF, JPG, PNG — max 5&nbsp;Mo par fichier.
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

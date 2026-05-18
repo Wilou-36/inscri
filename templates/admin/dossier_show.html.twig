@@ -1,0 +1,228 @@
+{# templates/admin/dossier_show.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Dossier — {{ dossier.nom }} {{ dossier.prenom }}{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
+            <li><a href="{{ path('admin_dashboard') }}">Administration</a></li>
+            <li><a href="{{ path('admin_candidats') }}">Candidats</a></li>
+            <li><span aria-current="page">{{ dossier.nom ?? 'Dossier #' ~ dossier.id }} {{ dossier.prenom ?? '' }}</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Administration · Lycée Fulbert</p>
+        <h1>Dossier #{{ dossier.id }} — {{ dossier.nom|upper ?? '?' }} {{ dossier.prenom ?? '?' }}</h1>
+        <p class="rf-page-header__sub">
+            {{ dossier.user.email }}
+            &nbsp;·&nbsp; Créé le {{ dossier.createdAt|date('d/m/Y à H:i') }}
+            {% if dossier.soumisAt %}
+                &nbsp;·&nbsp; Soumis le {{ dossier.soumisAt|date('d/m/Y à H:i') }}
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="rf-container" style="padding-bottom:48px;">
+
+    {# Flash #}
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
+        </div>
+    {% endfor %}
+
+    {# ── Bandeau statut + actions ── #}
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+
+        <span class="rf-badge rf-badge--{{ dossier.statut == 'brouillon' ? 'draft' : (dossier.statut == 'soumis' ? 'pending' : (dossier.statut == 'valide' ? 'ok' : 'refused')) }}"
+              style="font-size:13px;padding:5px 14px;">
+            {{ dossier.statutLabel }}
+        </span>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            {% if dossier.statut == 'soumis' %}
+                <form method="post"
+                      action="{{ path('admin_dossier_statut', {id: dossier.id, statut: 'valide'}) }}"
+                      onsubmit="return confirm('Valider ce dossier ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin_statut_' ~ dossier.id) }}">
+                    <button type="submit" class="rf-btn rf-btn--success">Valider le dossier</button>
+                </form>
+                <form method="post"
+                      action="{{ path('admin_dossier_statut', {id: dossier.id, statut: 'refuse'}) }}"
+                      onsubmit="return confirm('Refuser ce dossier ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin_statut_' ~ dossier.id) }}">
+                    <button type="submit" class="rf-btn rf-btn--danger">Refuser</button>
+                </form>
+            {% elseif dossier.statut in ['valide', 'refuse'] %}
+                <form method="post"
+                      action="{{ path('admin_dossier_statut', {id: dossier.id, statut: 'soumis'}) }}"
+                      onsubmit="return confirm('Remettre ce dossier en attente ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin_statut_' ~ dossier.id) }}">
+                    <button type="submit" class="rf-btn rf-btn--secondary rf-btn--sm">Remettre en attente</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {# ── Layout 2 colonnes ── #}
+    <div class="rf-layout-2col">
+
+        {# ── Colonne principale ── #}
+        <div>
+
+            {# Informations personnelles #}
+            <div class="rf-card">
+                <div class="rf-card__head"><h2>Informations personnelles</h2></div>
+                <div class="rf-card__body">
+                    <dl class="rf-recap-dl">
+                        <div><dt>Nom / Prénom</dt><dd>{{ dossier.nom|upper ?? '—' }} {{ dossier.prenom ?? '' }}</dd></div>
+                        <div><dt>Civilité</dt><dd>{{ dossier.genre == 'F' ? 'Madame' : (dossier.genre == 'M' ? 'Monsieur' : '—') }}</dd></div>
+                        <div><dt>Date de naissance</dt><dd>{{ dossier.dateNaissance ? dossier.dateNaissance|date('d/m/Y') : '—' }}</dd></div>
+                        <div><dt>Nationalité</dt><dd>{{ dossier.nationalite ?? '—' }}</dd></div>
+                        <div><dt>Téléphone</dt><dd>{{ dossier.telephone ?? '—' }}</dd></div>
+                        <div class="full"><dt>Adresse</dt><dd>{{ dossier.adresse ?? '—' }}, {{ dossier.codePostal ?? '' }} {{ dossier.ville ?? '' }}</dd></div>
+                    </dl>
+                </div>
+            </div>
+
+            {# Parcours scolaire #}
+            <div class="rf-card">
+                <div class="rf-card__head"><h2>Parcours scolaire</h2></div>
+                <div class="rf-card__body">
+                    <dl class="rf-recap-dl">
+                        <div><dt>Diplôme</dt><dd>{{ dossier.dernierDiplome ?? '—' }}</dd></div>
+                        <div><dt>Spécialité</dt><dd>{{ dossier.specialiteBac ?? '—' }}</dd></div>
+                        <div><dt>Mention</dt><dd>{{ dossier.mentionBac ?? '—' }}</dd></div>
+                        <div><dt>Année</dt><dd>{{ dossier.anneeObtention ?? '—' }}</dd></div>
+                        <div class="full"><dt>Établissement d'origine</dt><dd>{{ dossier.etablissementOrigine ?? '—' }}</dd></div>
+                    </dl>
+                    {% if dossier.experiencePro %}
+                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--rf-gris-200);">
+                        <p class="rf-section-title" style="margin-top:0;">Expérience professionnelle</p>
+                        <p style="font-size:14px;white-space:pre-wrap;line-height:1.7;color:var(--rf-gris-800);">{{ dossier.experiencePro }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Choix BTS #}
+            <div class="rf-card">
+                <div class="rf-card__head"><h2>Choix du BTS</h2></div>
+                <div class="rf-card__body">
+                    <dl class="rf-recap-dl" style="margin-bottom:{% if dossier.lettreMotivation %}20px{% else %}0{% endif %};">
+                        <div><dt>1er vœu</dt><dd><strong>{{ dossier.btsChoisi ?? '—' }}</strong></dd></div>
+                        <div><dt>2e vœu</dt><dd>{{ dossier.btsChoisi2 ?? 'Aucun' }}</dd></div>
+                        <div><dt>Apprentissage</dt><dd>{{ dossier.regimeAppr ? 'Oui' : 'Non' }}</dd></div>
+                    </dl>
+                    {% if dossier.lettreMotivation %}
+                    <div style="padding:16px;background:var(--rf-gris-50);border-radius:var(--rf-radius);border-left:4px solid var(--rf-bleu-border);">
+                        <p class="rf-section-title" style="margin-top:0;">
+                            Lettre de motivation ({{ dossier.lettreMotivation|length }} caractères)
+                        </p>
+                        <p style="font-size:14px;white-space:pre-wrap;line-height:1.7;color:var(--rf-gris-800);margin:0;">{{ dossier.lettreMotivation }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        {# ── Sidebar ── #}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+            {# Pièces justificatives #}
+            <div class="rf-card">
+                <div class="rf-card__head"><h2>Pièces justificatives</h2></div>
+                <div class="rf-card__body" style="padding:0;">
+                    {% if dossier.piecesJustificatives|length > 0 %}
+                        {% for piece in dossier.piecesJustificatives %}
+                        <div style="padding:12px 16px;border-bottom:1px solid var(--rf-gris-200);display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+                            <div>
+                                <p style="font-size:13px;font-weight:700;margin:0 0 3px;color:var(--rf-gris-900);">
+                                    {{ piece.typeLabel }}
+                                </p>
+                                <p style="font-size:11.5px;color:var(--rf-gris-425);margin:0;line-height:1.6;">
+                                    {{ piece.nomFichier }}<br>
+                                    {{ piece.tailleFormatee }} — {{ piece.uploadedAt|date('d/m/Y') }}
+                                </p>
+                            </div>
+                            <a href="{{ path('admin_piece_download', {id: piece.id}) }}"
+                               class="rf-btn rf-btn--secondary rf-btn--sm"
+                               style="flex-shrink:0;"
+                               title="Télécharger {{ piece.typeLabel }}">
+                                Télécharger
+                            </a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="padding:20px;color:var(--rf-gris-425);font-size:13.5px;text-align:center;">
+                            Aucune pièce déposée
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Compte candidat #}
+            <div class="rf-card">
+                <div class="rf-card__head"><h2>Compte candidat</h2></div>
+                <div class="rf-card__body" style="padding:16px 20px;">
+                    <div class="rf-info-item">
+                        <p class="rf-info-item__title">Adresse e-mail</p>
+                        <p>{{ dossier.user.email }}</p>
+                    </div>
+                    <div class="rf-info-item">
+                        <p class="rf-info-item__title">Vérification e-mail</p>
+                        <p>
+                            {% if dossier.user.verified %}
+                                <span class="rf-account-pill">
+                                    <span class="rf-account-pill__dot rf-account-pill__dot--ok"></span>
+                                    Vérifié
+                                </span>
+                            {% else %}
+                                <span class="rf-account-pill">
+                                    <span class="rf-account-pill__dot rf-account-pill__dot--warning"></span>
+                                    Non vérifié
+                                </span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="rf-info-item">
+                        <p class="rf-info-item__title">Inscrit le</p>
+                        <p>{{ dossier.user.createdAt|date('d/m/Y') }}</p>
+                    </div>
+                    <div class="rf-info-item">
+                        <p class="rf-info-item__title">Dernière modification</p>
+                        <p>{{ dossier.updatedAt|date('d/m/Y à H:i') }}</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {# ── Retour ── #}
+    <div style="margin-top:8px;">
+        <a href="{{ path('admin_candidats') }}" class="rf-btn rf-btn--secondary">← Retour à la liste</a>
+    </div>
+
+</div>
+
+<style>
+.rf-btn--danger {
+    background: #c0000a;
+    color: #fff;
+    border-color: #c0000a;
+}
+.rf-btn--danger:hover { background: #8b0007; border-color: #8b0007; color: #fff; }
+</style>
+
+{% endblock %}

@@ -1,0 +1,186 @@
+{# templates/admin/candidats.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Administration — Candidats{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
+            <li><a href="{{ path('admin_dashboard') }}">Administration</a></li>
+            <li><span aria-current="page">Candidats</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Liste des candidats</h1>
+        <p class="rf-page-header__sub">{{ dossiers|length }} dossier{{ dossiers|length > 1 ? 's' }} trouvé{{ dossiers|length > 1 ? 's' }}</p>
+    </div>
+</div>
+
+<div class="rf-container" style="padding-bottom:48px;">
+
+    {# Flash #}
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
+        </div>
+    {% endfor %}
+
+    {# ── Barre d'actions ── #}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+        <a href="{{ path('admin_dashboard') }}" class="rf-btn rf-btn--secondary rf-btn--sm">← Tableau de bord</a>
+        <a href="{{ path('admin_export_csv') }}" class="rf-btn rf-btn--secondary rf-btn--sm">Exporter CSV</a>
+    </div>
+
+    {# ── Filtres ── #}
+    <div class="rf-card" style="margin-bottom:16px;">
+        <div class="rf-card__body" style="padding:16px 20px;">
+            <form method="get" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+
+                <div style="flex:2;min-width:180px;">
+                    <label class="rf-label" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--rf-gris-425);">
+                        Recherche
+                    </label>
+                    <input type="text" name="q" value="{{ search }}"
+                           placeholder="Nom, prénom, email…"
+                           style="display:block;width:100%;padding:8px 12px;font-size:13.5px;font-family:var(--rf-font);border:2px solid var(--rf-gris-425);border-radius:var(--rf-radius);outline:none;transition:border-color .15s;">
+                </div>
+
+                <div style="flex:1;min-width:140px;">
+                    <label class="rf-label" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--rf-gris-425);">
+                        Statut
+                    </label>
+                    <select name="statut"
+                            style="display:block;width:100%;padding:8px 12px;font-size:13.5px;font-family:var(--rf-font);border:2px solid var(--rf-gris-425);border-radius:var(--rf-radius);outline:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 8px center;padding-right:32px;-webkit-appearance:none;appearance:none;">
+                        <option value="">Tous</option>
+                        {% for k, lbl in statuts %}
+                            <option value="{{ k }}" {{ statut == k ? 'selected' }}>{{ lbl }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="flex:1;min-width:150px;">
+                    <label class="rf-label" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--rf-gris-425);">
+                        BTS
+                    </label>
+                    <select name="bts"
+                            style="display:block;width:100%;padding:8px 12px;font-size:13.5px;font-family:var(--rf-font);border:2px solid var(--rf-gris-425);border-radius:var(--rf-radius);outline:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 8px center;padding-right:32px;-webkit-appearance:none;appearance:none;">
+                        <option value="">Tous</option>
+                        {% for lbl, k in btsList %}
+                            <option value="{{ k }}" {{ bts == k ? 'selected' }}>{{ lbl }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="display:flex;gap:8px;padding-bottom:1px;">
+                    <button type="submit" class="rf-btn rf-btn--primary rf-btn--sm">Filtrer</button>
+                    {% if search or statut or bts %}
+                        <a href="{{ path('admin_candidats') }}" class="rf-btn rf-btn--secondary rf-btn--sm">
+                            Réinitialiser
+                        </a>
+                    {% endif %}
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    {# ── Tableau ── #}
+    <div class="rf-card">
+        <div class="rf-card__body" style="padding:0;overflow-x:auto;">
+            {% if dossiers|length > 0 %}
+            <table class="rf-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Candidat</th>
+                        <th>E-mail</th>
+                        <th>BTS 1er vœu</th>
+                        <th>Progression</th>
+                        <th>Statut</th>
+                        <th>Soumis</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for d in dossiers %}
+                    <tr>
+                        <td style="color:var(--rf-gris-425);font-size:12px;white-space:nowrap;">
+                            #{{ d.id }}
+                        </td>
+                        <td>
+                            {% if d.nom %}
+                                <strong>{{ d.nom|upper }} {{ d.prenom }}</strong>
+                            {% else %}
+                                <em style="color:var(--rf-gris-425);">Non renseigné</em>
+                            {% endif %}
+                        </td>
+                        <td style="font-size:12.5px;color:var(--rf-gris-425);">{{ d.user.email }}</td>
+                        <td>
+                            {% if d.btsChoisi %}
+                                <span style="font-size:13px;font-weight:600;">{{ d.btsChoisi }}</span>
+                            {% else %}
+                                <span style="color:var(--rf-gris-200);">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:8px;min-width:90px;">
+                                <div style="flex:1;height:4px;background:var(--rf-gris-200);border-radius:2px;overflow:hidden;">
+                                    <div style="width:{{ (d.etapeActuelle / 5 * 100)|round }}%;height:100%;background:var(--rf-bleu);border-radius:2px;"></div>
+                                </div>
+                                <span style="font-size:11.5px;color:var(--rf-gris-425);white-space:nowrap;">
+                                    {{ d.etapeActuelle }}/5
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="rf-badge rf-badge--{{ d.statut == 'brouillon' ? 'draft' : (d.statut == 'soumis' ? 'pending' : (d.statut == 'valide' ? 'ok' : 'refused')) }}">
+                                {{ d.statutLabel }}
+                            </span>
+                        </td>
+                        <td style="font-size:12px;color:var(--rf-gris-425);white-space:nowrap;">
+                            {{ d.soumisAt ? d.soumisAt|date('d/m/Y') : '—' }}
+                        </td>
+                        <td>
+                            <a href="{{ path('admin_dossier_show', {id: d.id}) }}"
+                               class="rf-btn rf-btn--secondary rf-btn--sm">
+                                Consulter
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="padding:56px 24px;text-align:center;color:var(--rf-gris-425);">
+                <p style="font-size:2rem;margin-bottom:12px;">—</p>
+                <p style="font-size:14px;">Aucun dossier ne correspond à votre recherche.</p>
+                {% if search or statut or bts %}
+                    <a href="{{ path('admin_candidats') }}" class="rf-btn rf-btn--secondary rf-btn--sm" style="margin-top:14px;">
+                        Réinitialiser les filtres
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<style>
+/* focus sur les inputs natifs du filtre */
+form input[type="text"]:focus,
+form select:focus {
+    border-color: var(--rf-bleu) !important;
+    box-shadow: 0 0 0 2px rgba(0,0,145,.15);
+}
+</style>
+
+{% endblock %}

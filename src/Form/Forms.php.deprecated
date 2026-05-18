@@ -1,0 +1,16 @@
+<?php
+/**
+ * DEPRECATED: Ce fichier est dépréciéd.
+ * 
+ * Les classes de formulaire ont été déplacées dans des fichiers individuels:
+ * - RegistrationFormType.php
+ * - Step1PersonnelType.php
+ * - Step2ScolaireType.php
+ * - Step3BtsType.php
+ * - Step4PiecesType.php
+ * 
+ * Ce fichier doit être supprimé manuellement.
+ */
+
+namespace App\Form;
+

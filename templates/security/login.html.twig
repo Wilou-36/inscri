@@ -1,0 +1,100 @@
+{# templates/security/login.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Connexion{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li><span aria-current="page">Connexion</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Connexion à votre espace</h1>
+        <p class="rf-page-header__sub">Accédez à votre dossier d'inscription BTS.</p>
+    </div>
+</div>
+
+<div class="rf-container" style="max-width:480px;padding-bottom:56px;">
+
+    <div class="rf-card">
+        <div class="rf-card__head">
+            <h2>Identification</h2>
+        </div>
+
+        <div class="rf-card__body">
+
+            {% if error %}
+                <div class="rf-error-banner" role="alert">
+                    <strong>Erreur de connexion</strong>
+                    <ul><li>{{ error.messageKey|trans(error.messageData, 'security') }}</li></ul>
+                </div>
+            {% endif %}
+
+            <form method="post" action="{{ path('app_login') }}" novalidate>
+
+                <div class="rf-form-group">
+                    <label class="rf-label" for="username">Adresse e-mail <span class="rf-req">*</span></label>
+                    <input class="rf-card__body" type="email" id="username" name="_username"
+                           value="{{ last_username }}"
+                           autocomplete="email" required
+                           placeholder="votre@email.fr"
+                           style="display:block;width:100%;padding:9px 12px;font-size:14px;font-family:var(--rf-font);color:var(--rf-gris-900);background:var(--rf-blanc);border:2px solid var(--rf-gris-425);border-radius:var(--rf-radius);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none;box-sizing:border-box;">
+                </div>
+
+                <div class="rf-form-group">
+                    <label class="rf-label" for="password">Mot de passe <span class="rf-req">*</span></label>
+                    <input type="password" id="password" name="_password"
+                           autocomplete="current-password" required
+                           placeholder="Votre mot de passe"
+                           style="display:block;width:100%;padding:9px 12px;font-size:14px;font-family:var(--rf-font);color:var(--rf-gris-900);background:var(--rf-blanc);border:2px solid var(--rf-gris-425);border-radius:var(--rf-radius);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none;box-sizing:border-box;">
+                </div>
+
+                <div class="rf-form-group rf-check">
+                    <label>
+                        <input type="checkbox" name="_remember_me">
+                        <span>Se souvenir de moi pendant 7 jours</span>
+                    </label>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="rf-btn rf-btn--primary" style="width:100%;justify-content:center;margin-top:8px;">
+                    Se connecter
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="rf-card__foot" style="justify-content:center;">
+            <a href="{{ path('app_register') }}" style="font-size:14px;color:var(--rf-bleu);">
+                Pas encore de compte ? <strong>Créer un compte</strong>
+            </a>
+        </div>
+    </div>
+
+    <div class="rf-callout" style="font-size:12.5px;">
+        <strong>Protection des données :</strong> vos données sont protégées conformément au RGPD
+        par le lycée Fulbert, établissement public sous tutelle du Ministère de l'Éducation nationale.
+    </div>
+
+</div>
+
+<style>
+/* Focus sur les inputs natifs hors rf-card__body */
+#username:focus, #password:focus {
+    border-color: var(--rf-bleu) !important;
+    box-shadow: 0 0 0 2px rgba(0,0,145,.15) !important;
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,279 @@
+{# templates/legal/politique_confidentialite.html.twig #}
+{% extends 'base.html.twig' %}
+{% block title %}Politique de confidentialité{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li><span aria-current="page">Politique de confidentialité</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Politique de confidentialité</h1>
+        <p class="rf-page-header__sub">
+            Plateforme d'inscription en ligne BTS — Version en vigueur au 18 mai 2026
+        </p>
+    </div>
+</div>
+
+<div class="rf-container" style="max-width:820px;padding-bottom:56px;">
+
+    {# Bandeau téléchargement #}
+    <div class="rf-callout" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <span style="flex:1;">
+            <strong>Document complet disponible :</strong>
+            vous pouvez télécharger la version intégrale au format Word.
+        </span>
+        <a href="{{ asset('documents/politique_confidentialite.docx') }}"
+           class="rf-btn rf-btn--secondary rf-btn--sm"
+           download>
+            Télécharger (.docx)
+        </a>
+    </div>
+
+    <div class="rf-card">
+        <div class="rf-card__body" style="line-height:1.8;">
+
+            {# ── 1. Objet ── #}
+            <h2 class="rf-politique-h2">1. Objet de la présente politique</h2>
+            <p>
+                La présente politique de confidentialité décrit la manière dont le lycée Fulbert
+                (ci-après « l'Établissement ») collecte, utilise, conserve et protège les données
+                à caractère personnel des candidats qui utilisent la plateforme numérique d'inscription
+                en ligne aux formations BTS.
+            </p>
+            <p>
+                Elle s'applique à l'ensemble des traitements mis en œuvre dans le cadre de cette
+                plateforme et est établie conformément au <strong>Règlement Général sur la Protection
+                des Données</strong> (RGPD — Règlement UE 2016/679) et à la loi n°&nbsp;78-17 du
+                6 janvier 1978 modifiée relative à l'informatique, aux fichiers et aux libertés.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 2. Responsable ── #}
+            <h2 class="rf-politique-h2">2. Responsable du traitement</h2>
+            <div class="rf-callout" style="font-size:13.5px;">
+                <strong>Lycée Fulbert</strong><br>
+                Place Billard — 28000 Chartres<br>
+                <a href="mailto:scolarite@lycee-fulbert.fr">scolarite@lycee-fulbert.fr</a>
+                &nbsp;—&nbsp; 02&nbsp;37&nbsp;91&nbsp;40&nbsp;00<br>
+                Académie d'Orléans-Tours · Ministère de l'Éducation nationale
+            </div>
+
+            <hr class="rf-divider">
+
+            {# ── 3. Données collectées ── #}
+            <h2 class="rf-politique-h2">3. Données personnelles collectées</h2>
+
+            <h3 class="rf-politique-h3">3.1 Données d'identification</h3>
+            <ul class="rf-politique-list">
+                <li>Nom, prénom, date et lieu de naissance, nationalité</li>
+                <li>Adresse postale, téléphone mobile, adresse électronique</li>
+            </ul>
+
+            <h3 class="rf-politique-h3">3.2 Données relatives au parcours scolaire</h3>
+            <ul class="rf-politique-list">
+                <li>Diplôme, série, mention, année d'obtention</li>
+                <li>Établissement d'origine, expériences professionnelles</li>
+            </ul>
+
+            <h3 class="rf-politique-h3">3.3 Données relatives à la candidature</h3>
+            <ul class="rf-politique-list">
+                <li>Formation(s) BTS souhaitée(s), souhait d'apprentissage</li>
+                <li>Lettre de motivation</li>
+            </ul>
+
+            <h3 class="rf-politique-h3">3.4 Pièces justificatives</h3>
+            <ul class="rf-politique-list">
+                <li>Carte nationale d'identité, photographie d'identité</li>
+                <li>Relevé(s) de notes, diplôme du baccalauréat, CV (facultatif)</li>
+            </ul>
+
+            <h3 class="rf-politique-h3">3.5 Données de connexion</h3>
+            <ul class="rf-politique-list">
+                <li>Adresse électronique (identifiant), mot de passe haché</li>
+                <li>Horodatage des connexions et modifications</li>
+            </ul>
+
+            <hr class="rf-divider">
+
+            {# ── 4. Finalités ── #}
+            <h2 class="rf-politique-h2">4. Finalités et bases légales</h2>
+            <table class="rf-table" style="margin-top:12px;">
+                <thead>
+                    <tr>
+                        <th>Finalité</th>
+                        <th>Base légale (RGPD art.&nbsp;6)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Traitement des demandes d'admission en BTS</td><td>Mission d'intérêt public</td></tr>
+                    <tr><td>Gestion des dossiers de candidature</td><td>Mission d'intérêt public</td></tr>
+                    <tr><td>Communication avec les candidats</td><td>Intérêt légitime</td></tr>
+                    <tr><td>Statistiques anonymisées</td><td>Mission d'intérêt public</td></tr>
+                    <tr><td>Sécurité et journalisation des accès</td><td>Obligation légale</td></tr>
+                </tbody>
+            </table>
+
+            <hr class="rf-divider">
+
+            {# ── 5. Durée de conservation ── #}
+            <h2 class="rf-politique-h2">5. Durée de conservation</h2>
+            <ul class="rf-politique-list">
+                <li><strong>Dossier de candidature :</strong> 5 ans à compter de la fin de la procédure d'admission</li>
+                <li><strong>Journaux d'accès :</strong> 12 mois</li>
+                <li><strong>Pièces justificatives :</strong> durée du dossier associé</li>
+                <li><strong>Comptes inactifs :</strong> suppression après 3 ans sans activité (notification préalable)</li>
+            </ul>
+
+            <hr class="rf-divider">
+
+            {# ── 6. Destinataires ── #}
+            <h2 class="rf-politique-h2">6. Destinataires des données</h2>
+            <p>
+                Les données sont destinées exclusivement aux personnels habilités de l'Établissement
+                (direction, scolarité, enseignants responsables de BTS) ainsi qu'aux organismes
+                auxquels une transmission est légalement obligatoire (Rectorat, Ministère).
+            </p>
+            <p><strong>Aucune donnée n'est cédée, vendue ou transmise à des tiers à des fins commerciales.</strong></p>
+
+            <hr class="rf-divider">
+
+            {# ── 7. Vos droits ── #}
+            <h2 class="rf-politique-h2">7. Vos droits</h2>
+            <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+            <ul class="rf-politique-list">
+                <li><strong>Accès</strong> (art. 15) — obtenir une copie de vos données</li>
+                <li><strong>Rectification</strong> (art. 16) — corriger des données inexactes</li>
+                <li><strong>Effacement</strong> (art. 17) — dans les cas prévus par la réglementation</li>
+                <li><strong>Limitation</strong> (art. 18) — suspendre temporairement un traitement</li>
+                <li><strong>Opposition</strong> (art. 21) — pour raisons tenant à votre situation particulière</li>
+                <li><strong>Portabilité</strong> (art. 20) — recevoir vos données dans un format structuré</li>
+            </ul>
+
+            <div class="rf-callout" style="margin-top:16px;">
+                <strong>Exercer vos droits :</strong> adressez votre demande avec un justificatif d'identité à
+                <a href="mailto:scolarite@lycee-fulbert.fr">scolarite@lycee-fulbert.fr</a>
+                (objet : <em>Exercice de droits RGPD</em>).
+                Réponse garantie sous 1 mois (art. 12 RGPD).
+            </div>
+
+            <p style="margin-top:14px;font-size:13.5px;color:var(--rf-gris-625);">
+                Vous pouvez également déposer une réclamation auprès de la
+                <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>
+                (3 Place de Fontenoy — 75334 Paris Cedex 07 — 01 53 73 22 22).
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 8. Sécurité ── #}
+            <h2 class="rf-politique-h2">8. Sécurité des données</h2>
+            <ul class="rf-politique-list">
+                <li>Mots de passe hachés (bcrypt)</li>
+                <li>Transmission via HTTPS / TLS 1.2 minimum</li>
+                <li>Accès restreint aux personnels habilités</li>
+                <li>Journalisation des accès et modifications</li>
+                <li>Protection CSRF intégrée aux formulaires</li>
+            </ul>
+
+            <hr class="rf-divider">
+
+            {# ── 9. Cookies ── #}
+            <h2 class="rf-politique-h2">9. Cookies</h2>
+            <p>
+                La plateforme utilise uniquement des cookies strictement nécessaires à son fonctionnement
+                (session Symfony, token CSRF). Aucun cookie publicitaire ou analytique tiers n'est déposé.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 10. Hébergement ── #}
+            <h2 class="rf-politique-h2">10. Hébergement et transferts</h2>
+            <p>
+                Les données sont hébergées sur des serveurs situés dans l'Union européenne.
+                Aucun transfert vers un pays tiers n'est effectué.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 11. Modifications ── #}
+            <h2 class="rf-politique-h2">11. Modifications</h2>
+            <p>
+                En cas de modification substantielle, les utilisateurs seront informés par courriel
+                au moins 30 jours avant l'entrée en vigueur des nouvelles dispositions.
+                La version actuellement en vigueur est datée du <strong>18 mai 2026</strong>.
+            </p>
+
+            <hr class="rf-divider">
+
+            {# ── 12. Contact ── #}
+            <h2 class="rf-politique-h2">12. Contact</h2>
+            <div class="rf-callout">
+                <strong>Lycée Fulbert — Service scolarité</strong><br>
+                Place Billard — 28000 Chartres<br>
+                <a href="mailto:scolarite@lycee-fulbert.fr">scolarite@lycee-fulbert.fr</a>
+                &nbsp;—&nbsp; 02&nbsp;37&nbsp;91&nbsp;40&nbsp;00
+            </div>
+
+        </div>
+
+        <div class="rf-card__foot" style="font-size:12px;color:var(--rf-gris-425);">
+            Dernière mise à jour : 18 mai 2026 — Lycée Fulbert, Chartres
+        </div>
+    </div>
+
+    <div style="text-align:center;margin-top:12px;">
+        <a href="{{ path('app_register') }}" class="rf-btn rf-btn--secondary rf-btn--sm">
+            ← Retour à la création de compte
+        </a>
+    </div>
+
+</div>
+
+<style>
+.rf-politique-h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--rf-bleu);
+    margin: 28px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--rf-bleu-border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.rf-politique-h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 16px;
+    background: var(--rf-bleu);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.rf-politique-h3 {
+    font-size: .875rem;
+    font-weight: 700;
+    color: var(--rf-gris-800);
+    margin: 18px 0 8px;
+}
+.rf-politique-list {
+    margin: 0 0 8px 0;
+    padding-left: 20px;
+    color: var(--rf-gris-800);
+    font-size: 14px;
+    line-height: 1.9;
+}
+.rf-politique-list li { margin-bottom: 4px; }
+</style>
+
+{% endblock %}

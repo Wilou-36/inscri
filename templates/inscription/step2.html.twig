@@ -1,0 +1,97 @@
+{# templates/inscription/step2.html.twig #}
+{% extends 'base.html.twig' %}
+{% from 'inscription/_stepper.html.twig' import stepper %}
+{% block title %}Étape 2 — Parcours scolaire{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
+            <li><a href="{{ path('inscription_step1') }}">Inscription BTS</a></li>
+            <li><span aria-current="page">Parcours scolaire</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Inscription BTS — Dossier de candidature</h1>
+        <p class="rf-page-header__sub">Renseignez votre parcours scolaire et vos diplômes.</p>
+    </div>
+</div>
+
+<div class="rf-container--narrow" style="padding-bottom:48px;">
+
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
+        </div>
+    {% endfor %}
+
+    {{ stepper(step, dossier.etapeActuelle) }}
+
+    {{ form_start(form, {attr: {novalidate: 'novalidate', class: 'rf-card'}}) }}
+
+        <div class="rf-card__head"><h1>Parcours scolaire</h1></div>
+
+        <div class="rf-card__body">
+
+            <p class="rf-section-title">Diplôme</p>
+
+            <div class="rf-grid-2">
+                <div class="rf-form-group">
+                    <label class="rf-label">Dernier diplôme obtenu <span class="rf-req">*</span></label>
+                    {{ form_widget(form.dernierDiplome) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.dernierDiplome) }}</ul>
+                </div>
+                <div class="rf-form-group">
+                    <label class="rf-label">Série / Spécialité</label>
+                    {{ form_widget(form.specialiteBac) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.specialiteBac) }}</ul>
+                </div>
+            </div>
+
+            <div class="rf-grid-2">
+                <div class="rf-form-group">
+                    <label class="rf-label">Mention <span class="rf-req">*</span></label>
+                    {{ form_widget(form.mentionBac) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.mentionBac) }}</ul>
+                </div>
+                <div class="rf-form-group">
+                    <label class="rf-label">Année d'obtention <span class="rf-req">*</span></label>
+                    {{ form_widget(form.anneeObtention) }}
+                    <ul class="rf-form-errors">{{ form_errors(form.anneeObtention) }}</ul>
+                </div>
+            </div>
+
+            <div class="rf-form-group">
+                <label class="rf-label">Établissement d'origine <span class="rf-req">*</span></label>
+                {{ form_widget(form.etablissementOrigine) }}
+                <ul class="rf-form-errors">{{ form_errors(form.etablissementOrigine) }}</ul>
+            </div>
+
+            <hr class="rf-divider">
+            <p class="rf-section-title">Expérience professionnelle</p>
+
+            <div class="rf-form-group">
+                {{ form_widget(form.experiencePro, {attr: {rows: 5}}) }}
+                <p class="rf-help-text">Facultatif — stages, emplois saisonniers, bénévolat…</p>
+            </div>
+
+        </div>
+
+        <div class="rf-card__foot">
+            <a href="{{ path('inscription_step1') }}" class="rf-btn rf-btn--secondary">Étape précédente</a>
+            <span class="rf-spacer"></span>
+            <button type="submit" class="rf-btn rf-btn--primary">Enregistrer et continuer</button>
+        </div>
+
+    {{ form_end(form) }}
+
+</div>
+{% endblock %}

@@ -1,0 +1,169 @@
+{# templates/inscription/step3.html.twig #}
+{% extends 'base.html.twig' %}
+{% from 'inscription/_stepper.html.twig' import stepper %}
+{% block title %}Étape 3 — Choix du BTS{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
+            <li><a href="{{ path('inscription_step1') }}">Inscription BTS</a></li>
+            <li><span aria-current="page">Choix du BTS</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Inscription BTS — Dossier de candidature</h1>
+        <p class="rf-page-header__sub">Sélectionnez la formation souhaitée et rédigez votre lettre de motivation.</p>
+    </div>
+</div>
+
+<div class="rf-container--narrow" style="padding-bottom:48px;">
+
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
+        </div>
+    {% endfor %}
+
+    {{ stepper(step, dossier.etapeActuelle) }}
+
+    {{ form_start(form, {attr: {novalidate: 'novalidate', class: 'rf-card'}}) }}
+
+        <div class="rf-card__head"><h1>Choix du BTS</h1></div>
+
+        {% if form.vars.errors|length > 0 %}
+            <div style="padding:16px 20px 0;">
+                <div class="rf-error-banner">
+                    <strong>Erreurs de validation</strong>
+                    <ul>{% for e in form.vars.errors %}<li>{{ e.message }}</li>{% endfor %}</ul>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="rf-card__body">
+
+            <p class="rf-section-title">Formations souhaitées</p>
+
+            {# ── Accordéon 1er vœu ── #}
+            <div class="rf-accordion">
+                <button type="button" class="rf-accordion__btn"
+                        aria-expanded="true" aria-controls="acc-voeu1-body">
+                    <span class="rf-accordion__icon">☰</span>
+                    <span class="rf-accordion__lbl">Premier vœu — BTS souhaité <span class="rf-req">*</span></span>
+                    <span class="rf-accordion__badge" id="badge-voeu1">{{ dossier.btsChoisi ?: 'Non sélectionné' }}</span>
+                    <span class="rf-accordion__chevron">▾</span>
+                </button>
+                <div class="rf-accordion__body" id="acc-voeu1-body">
+                    <div class="rf-bts-grid">
+                        {% for child in form.btsChoisi %}
+                            <label class="rf-bts-card">
+                                {{ form_widget(child) }}
+                                <span>{{ child.vars.label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <ul class="rf-form-errors" style="margin-top:10px;">{{ form_errors(form.btsChoisi) }}</ul>
+                </div>
+            </div>
+
+            {# ── Accordéon 2e vœu ── #}
+            <div class="rf-accordion">
+                <button type="button" class="rf-accordion__btn"
+                        aria-expanded="false" aria-controls="acc-voeu2-body">
+                    <span class="rf-accordion__icon">☰</span>
+                    <span class="rf-accordion__lbl">
+                        Deuxième vœu
+                        <span style="font-size:12px;color:var(--rf-gris-425);font-weight:400;">(optionnel)</span>
+                    </span>
+                    <span class="rf-accordion__badge" id="badge-voeu2">{{ dossier.btsChoisi2 ?: 'Aucun' }}</span>
+                    <span class="rf-accordion__chevron">▾</span>
+                </button>
+                <div class="rf-accordion__body rf-accordion__body--closed" id="acc-voeu2-body">
+                    <div class="rf-form-group" style="max-width:400px;">
+                        {{ form_widget(form.btsChoisi2) }}
+                        <ul class="rf-form-errors">{{ form_errors(form.btsChoisi2) }}</ul>
+                    </div>
+                </div>
+            </div>
+
+            {# ── Apprentissage ── #}
+            <div class="rf-form-group rf-check" style="margin-top:16px;">
+                <label>
+                    {{ form_widget(form.regimeAppr) }}
+                    <span>Je souhaite m'inscrire en apprentissage</span>
+                </label>
+                <ul class="rf-form-errors">{{ form_errors(form.regimeAppr) }}</ul>
+            </div>
+
+            <hr class="rf-divider">
+            <p class="rf-section-title">Lettre de motivation</p>
+
+            <div class="rf-form-group">
+                {{ form_widget(form.lettreMotivation, {attr: {id: 'lettre', rows: 10}}) }}
+                <ul class="rf-form-errors">{{ form_errors(form.lettreMotivation) }}</ul>
+                <p class="rf-char-count" id="char-count">0 caractère — minimum 200 requis</p>
+            </div>
+
+        </div>
+
+        <div class="rf-card__foot">
+            <a href="{{ path('inscription_step2') }}" class="rf-btn rf-btn--secondary">Étape précédente</a>
+            <span class="rf-spacer"></span>
+            <button type="submit" class="rf-btn rf-btn--primary">Enregistrer et continuer</button>
+        </div>
+
+    {{ form_end(form) }}
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Accordéon
+    document.querySelectorAll('.rf-accordion__btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const open = this.getAttribute('aria-expanded') === 'true';
+            const body = document.getElementById(this.getAttribute('aria-controls'));
+            this.setAttribute('aria-expanded', String(!open));
+            body.classList.toggle('rf-accordion__body--closed', open);
+        });
+    });
+    // Badge 1er vœu
+    const b1 = document.getElementById('badge-voeu1');
+    document.querySelectorAll('#acc-voeu1-body input[type="radio"]').forEach(function (r) {
+        r.addEventListener('change', function () {
+            const lbl = this.closest('label.rf-bts-card');
+            if (lbl && b1) b1.textContent = lbl.querySelector('span').textContent.trim();
+        });
+    });
+    // Badge 2e vœu
+    const sel2 = document.querySelector('#acc-voeu2-body select');
+    const b2   = document.getElementById('badge-voeu2');
+    if (sel2 && b2) {
+        sel2.addEventListener('change', function () {
+            const t = this.options[this.selectedIndex]?.text || '';
+            b2.textContent = (!t || t === 'Aucun deuxième vœu') ? 'Aucun' : t;
+        });
+    }
+    // Compteur lettre
+    const ta = document.getElementById('lettre');
+    const cc = document.getElementById('char-count');
+    if (ta && cc) {
+        const upd = () => {
+            const n = ta.value.length;
+            cc.textContent = n + ' caractère' + (n > 1 ? 's' : '') + ' — minimum 200 requis';
+            cc.className   = 'rf-char-count ' + (n >= 200 ? 'rf-char-count--ok' : 'rf-char-count--err');
+        };
+        ta.addEventListener('input', upd); upd();
+    }
+});
+</script>
+
+{% endblock %}

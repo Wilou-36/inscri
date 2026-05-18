@@ -1,0 +1,96 @@
+{# templates/inscription/step4.html.twig #}
+{% extends 'base.html.twig' %}
+{% from 'inscription/_stepper.html.twig' import stepper %}
+{% block title %}Étape 4 — Pièces justificatives{% endblock %}
+
+{% block breadcrumb %}
+<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
+    <div class="rf-container">
+        <ol>
+            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
+            <li><a href="{{ path('inscription_step1') }}">Inscription BTS</a></li>
+            <li><span aria-current="page">Pièces justificatives</span></li>
+        </ol>
+    </div>
+</nav>
+{% endblock %}
+
+{% block body %}
+
+<div class="rf-page-header">
+    <div class="rf-container">
+        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
+        <h1>Inscription BTS — Dossier de candidature</h1>
+        <p class="rf-page-header__sub">Déposez vos pièces justificatives. Formats acceptés : PDF, JPG, PNG — max 5 Mo.</p>
+    </div>
+</div>
+
+<div class="rf-container--narrow" style="padding-bottom:48px;">
+
+    {% for label, messages in app.flashes %}
+        <div class="rf-flashes">
+            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
+        </div>
+    {% endfor %}
+
+    {{ stepper(step, dossier.etapeActuelle) }}
+
+    {{ form_start(form, {attr: {novalidate: 'novalidate', enctype: 'multipart/form-data', class: 'rf-card'}}) }}
+
+        <div class="rf-card__head"><h1>Pièces justificatives</h1></div>
+
+        <div class="rf-card__body">
+
+            <div class="rf-callout">
+                <strong>Formats acceptés :</strong> PDF, JPG, PNG — taille maximale 5 Mo par fichier.<br>
+                Les pièces marquées <strong style="color:var(--rf-rouge);">*</strong> sont obligatoires.
+            </div>
+
+            {% set obligatoires = typesRequis %}
+
+            <div class="rf-upload-grid">
+            {% for key, label in types %}
+                {% set req      = key in obligatoires %}
+                {% set existing = piecesExistantes[key] ?? null %}
+
+                <div class="rf-upload-item {{ existing ? 'has-file' }}">
+
+                    <div class="rf-upload-item__label">
+                        {{ label }}
+                        {% if req %}<span style="color:var(--rf-rouge);">*</span>{% endif %}
+                        {% if existing %}
+                            <span class="rf-badge rf-badge--ok" style="margin-left:4px;">Déposé</span>
+                        {% endif %}
+                    </div>
+
+                    {% if existing %}
+                        <p class="rf-upload-item__meta">
+                            {{ existing.nomFichier }} ({{ existing.tailleFormatee }})<br>
+                            <span style="font-size:11px;">Déposé le {{ existing.uploadedAt|date('d/m/Y') }}</span>
+                        </p>
+                    {% endif %}
+
+                    {{ form_widget(form[key]) }}
+
+                    {% if existing %}
+                        <p style="font-size:11px;color:var(--rf-gris-425);margin-top:4px;">Remplacer le fichier</p>
+                    {% endif %}
+
+                    <ul class="rf-form-errors">{{ form_errors(form[key]) }}</ul>
+
+                </div>
+            {% endfor %}
+            </div>
+
+        </div>
+
+        <div class="rf-card__foot">
+            <a href="{{ path('inscription_step3') }}" class="rf-btn rf-btn--secondary">Étape précédente</a>
+            <span class="rf-spacer"></span>
+            <button type="submit" class="rf-btn rf-btn--primary">Enregistrer et continuer</button>
+        </div>
+
+    {{ form_end(form) }}
+
+</div>
+{% endblock %}

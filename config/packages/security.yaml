@@ -1,0 +1,53 @@
+# config/packages/security.yaml
+
+security:
+    password_hashers:
+        App\Entity\User:
+            algorithm: bcrypt
+            cost: 13
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            lazy: true
+            provider: app_user_provider
+
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                username_parameter: _username
+                password_parameter: _password
+                enable_csrf: true          # Protection CSRF automatique
+                default_target_path: app_dashboard
+                always_use_default_target_path: false
+
+            logout:
+                path: app_logout
+                target: app_login
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800  # 7 jours
+                path: /
+
+    access_control:
+        - { path: ^/connexion, roles: PUBLIC_ACCESS }
+        - { path: ^/inscription$, roles: PUBLIC_ACCESS }
+        - { path: ^/verification-email, roles: PUBLIC_ACCESS }
+        - { path: ^/espace, roles: ROLE_USER }
+        - { path: ^/conditions-generales-utilisation,  roles: PUBLIC_ACCESS }
+        - { path: ^/politique-de-confidentialite,      roles: PUBLIC_ACCESS }
+        - { path: ^/inscription/etape, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]
