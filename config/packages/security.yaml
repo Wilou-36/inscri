@@ -1,18 +1,26 @@
 # config/packages/security.yaml
 
 security:
+
+    # ── Hashage des mots de passe ─────────────────────────────────────────────
+    # bcrypt cost=13 : bon compromis sécurité/performance (recommandé OWASP)
     password_hashers:
         App\Entity\User:
             algorithm: bcrypt
             cost: 13
 
+    # ── Fournisseur d'utilisateurs ────────────────────────────────────────────
+    # Symfony charge l'utilisateur depuis la BDD via son adresse e-mail
     providers:
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
 
+    # ── Firewalls ─────────────────────────────────────────────────────────────
     firewalls:
+
+        # Désactive la sécurité sur les assets et le profiler Symfony
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -21,33 +29,52 @@ security:
             lazy: true
             provider: app_user_provider
 
+            # ── Formulaire de connexion ───────────────────────────────────────
             form_login:
                 login_path: app_login
                 check_path: app_login
                 username_parameter: _username
                 password_parameter: _password
-                enable_csrf: true          # Protection CSRF automatique
-                default_target_path: app_dashboard
+                enable_csrf: true
+
+                
+
+                # Conserve la redirection vers la page demandée avant /connexion
                 always_use_default_target_path: false
 
+            # ── Déconnexion ───────────────────────────────────────────────────
+            # Symfony intercepte app_logout automatiquement et vide la session
             logout:
                 path: app_logout
                 target: app_login
 
+            # ── Se souvenir de moi ────────────────────────────────────────────
+            # Cookie sécurisé, durée 7 jours, lié au secret de l'application
             remember_me:
                 secret: '%kernel.secret%'
-                lifetime: 604800  # 7 jours
+                lifetime: 604800
                 path: /
 
+    # ── Contrôle d'accès ──────────────────────────────────────────────────────
+    # Les règles sont évaluées dans l'ordre — la première correspondance s'applique
     access_control:
-        - { path: ^/connexion, roles: PUBLIC_ACCESS }
-        - { path: ^/inscription$, roles: PUBLIC_ACCESS }
-        - { path: ^/verification-email, roles: PUBLIC_ACCESS }
-        - { path: ^/espace, roles: ROLE_USER }
-        - { path: ^/conditions-generales-utilisation,  roles: PUBLIC_ACCESS }
-        - { path: ^/politique-de-confidentialite,      roles: PUBLIC_ACCESS }
-        - { path: ^/inscription/etape, roles: ROLE_USER }
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        # Pages publiques — accessibles sans authentification
+        - { path: ^/connexion,                        roles: PUBLIC_ACCESS }
+        - { path: ^/creer-un-compte$,                 roles: PUBLIC_ACCESS }
+        - { path: ^/verification-email,               roles: PUBLIC_ACCESS }
+        - { path: ^/conditions-generales-utilisation, roles: PUBLIC_ACCESS }
+        - { path: ^/politique-de-confidentialite,     roles: PUBLIC_ACCESS }
 
+        # Espace administration — réservé aux administrateurs
+        - { path: ^/admin,                            roles: ROLE_ADMIN }
+
+        # Espace candidat et inscription — utilisateurs connectés uniquement
+        - { path: ^/mon-espace,                       roles: ROLE_USER }
+        - { path: ^/inscription,                      roles: ROLE_USER }
+
+    # ── Hiérarchie des rôles ──────────────────────────────────────────────────
+    # ROLE_ADMIN hérite de ROLE_USER : un admin peut accéder à toutes les
+    # routes ROLE_USER sans redéclaration supplémentaire
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER]
+        ROLE_USER: []

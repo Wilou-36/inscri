@@ -21,7 +21,7 @@ class AppFixtures extends Fixture
         $admin = new User();
         $admin->setEmail('admin@fulbert.fr');
         $admin->setRoles(['ROLE_ADMIN']);
-        $admin->setPassword($this->hasher->hashPassword($admin, 'Admin1234!'));
+        $admin->setPassword($this->hasher->hashPassword($admin, 'BTS_Admin#28'));
         $admin->setIsVerified(true);
         $manager->persist($admin);
 
@@ -53,9 +53,9 @@ class AppFixtures extends Fixture
                 $dossier->setGenre($prenom === 'Marie' || $prenom === 'Emma' || $prenom === 'Inès' ? 'F' : 'M');
                 $dossier->setDateNaissance(new \DateTime('-19 years'));
                 $dossier->setNationalite('Française');
-                $dossier->setTelephone('0612345678');
+                $dossier->setTelephone('06 12 34 56 78');
                 $dossier->setAdresse('12 rue de la Paix');
-                $dossier->setCodePostal('28000');
+                $dossier->setCodePostal('28 000');
                 $dossier->setVille('Chartres');
             }
             if ($etape >= 2) {
@@ -85,45 +85,3 @@ class AppFixtures extends Fixture
         $manager->flush();
     }
 }
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// config/services.yaml
-// ─────────────────────────────────────────────────────────────────────────────
-
-/*
-parameters:
-    upload_dir: '%kernel.project_dir%/var/uploads/dossiers'
-
-services:
-    _defaults:
-        autowire: true
-        autoconfigure: true
-
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
-
-    App\Controller\InscriptionController:
-        arguments:
-            $uploadDir: '%upload_dir%'
-        tags: ['controller.service_arguments']
-*/
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// config/routes.yaml (si on n'utilise pas les attributs PHP #[Route])
-// ─────────────────────────────────────────────────────────────────────────────
-
-/*
-# Redirection racine vers dashboard ou login
-app_home:
-    path: /
-    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
-    defaults:
-        route: app_dashboard
-        permanent: false
-*/

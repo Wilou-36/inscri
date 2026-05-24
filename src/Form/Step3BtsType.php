@@ -85,38 +85,3 @@ class Step3BtsType extends AbstractType
         ]);
     }
 }
-
-        $builder
-            ->add('btsChoisi', ChoiceType::class, [
-                'label'    => 'Premier vœu (BTS souhaité)',
-                'choices'  => $btsChoices,
-                'expanded' => true,
-                'required' => true,
-            ])
-            ->add('btsChoisi2', ChoiceType::class, [
-                'label'    => 'Deuxième vœu (optionnel)',
-                'choices'  => array_merge(['Aucun deuxième vœu' => ''], $btsChoices),
-                'required' => false,
-            ])
-            ->add('regimeAppr', CheckboxType::class, [
-                'label'    => "Je souhaite m'inscrire en apprentissage",
-                'required' => false,
-            ])
-            ->add('lettreMotivation', TextareaType::class, [
-                'label' => 'Lettre de motivation',
-                'attr'  => [
-                    'rows'        => 10,
-                    'placeholder' => 'Expliquez en quoi ce BTS correspond à votre projet professionnel (minimum 200 caractères)…',
-                ],
-                'help'  => 'Minimum 200 caractères. Expliquez votre motivation et votre projet.',
-            ]);
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class'        => Dossier::class,
-            'validation_groups' => ['Default', 'step3'],
-        ]);
-    }
-}

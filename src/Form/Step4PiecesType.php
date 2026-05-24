@@ -91,30 +91,3 @@ class Step4PiecesType extends AbstractType
         ]);
     }
 }
-
-        foreach (PieceJustificative::TYPES as $key => $label) {
-            $isRequired = in_array($key, $required);
-
-            $builder->add($key, FileType::class, [
-                'label'    => $label . ($isRequired ? ' *' : ''),
-                'mapped'   => false,
-                'required' => false,
-                'attr'     => ['accept' => 'application/pdf,image/jpeg,image/png'],
-                'help'     => 'PDF, JPG ou PNG — max 5 Mo' . ($isRequired ? ' (obligatoire)' : ' (facultatif)'),
-                'constraints' => [
-                    new File([
-                        'maxSize'          => '5M',
-                        'mimeTypes'        => ['application/pdf', 'image/jpeg', 'image/png'],
-                        'mimeTypesMessage' => 'Veuillez uploader un fichier PDF, JPG ou PNG.',
-                        'maxSizeMessage'   => 'Le fichier ne doit pas dépasser 5 Mo.',
-                    ]),
-                ],
-            ]);
-        }
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults(['data_class' => null]);
-    }
-}

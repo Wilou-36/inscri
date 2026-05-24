@@ -1,5 +1,19 @@
 <?php
 
+/**
+ * Formulaire d'enregistrement des utilisateurs (inscription).
+ * 
+ * Ce formulaire permet aux nouveaux utilisateurs de s'inscrire avec :
+ * - Une adresse email
+ * - Un mot de passe (avec confirmation)
+ * - L'acceptation des conditions générales d'utilisation
+ * 
+ * Validations appliquées :
+ * - Email: format email valide
+ * - Mot de passe: minimum 8 caractères, une majuscule, une minuscule et un chiffre
+ * - CGU: obligatoire
+ */
+
 namespace App\Form;
 
 use App\Entity\User;
@@ -12,8 +26,19 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Classe RegistrationFormType
+ * Responsable de la construction et de la configuration du formulaire d'inscription
+ */
 class RegistrationFormType extends AbstractType
 {
+    /**
+     * Construit le formulaire d'enregistrement.
+     * 
+     * @param FormBuilderInterface $builder Le constructeur de formulaire
+     * @param array $options Les options du formulaire
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -54,8 +79,15 @@ class RegistrationFormType extends AbstractType
             ]);
     }
 
+    /**
+     * Configure les options du formulaire.
+     * 
+     * @param OptionsResolver $resolver L'analyseur d'options
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
+        // Associe le formulaire à la classe User
         $resolver->setDefaults(['data_class' => User::class]);
     }
 }

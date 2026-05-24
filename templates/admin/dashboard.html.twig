@@ -2,187 +2,419 @@
 {% extends 'base.html.twig' %}
 {% block title %}Administration — Tableau de bord{% endblock %}
 
-{% block breadcrumb %}
-<nav class="rf-breadcrumb" aria-label="Fil d'Ariane">
-    <div class="rf-container">
-        <ol>
-            <li><a href="{{ path('app_dashboard') }}">Mon espace</a></li>
-            <li><span aria-current="page">Administration</span></li>
-        </ol>
-    </div>
-</nav>
-{% endblock %}
+{% block breadcrumb %}{% endblock %}
 
 {% block body %}
 
-<div class="rf-page-header">
-    <div class="rf-container">
-        <p class="rf-page-header__eyebrow">Lycée Fulbert · Académie d'Orléans-Tours</p>
-        <h1>Tableau de bord administrateur</h1>
-        <p class="rf-page-header__sub">Gestion des inscriptions BTS — campagne {{ "now"|date("Y") }}</p>
+{# ── Barre supérieure établissement ───────────────────────────────────────── #}
+<div class="adm-topbar">
+    <div class="adm-topbar__left">
+        <div class="adm-flag" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div>
+            <p class="adm-topbar__title">Lycée Fulbert — Admissions BTS</p>
+            <p class="adm-topbar__sub">Académie d'Orléans-Tours · Campagne {{ "now"|date("Y") }}</p>
+        </div>
+    </div>
+    <div class="adm-topbar__right">
+        <span class="adm-chip adm-chip--info">
+            Clôture dans {{ joursAvantCloture ?? '—' }} jours
+        </span>
+        <span class="adm-chip">Campagne ouverte</span>
+        <span class="adm-topbar__user">{{ app.user.email }}</span>
     </div>
 </div>
 
-<div class="rf-container" style="padding-bottom:48px;">
+{# ── Sous-navigation ──────────────────────────────────────────────────────── #}
+<nav class="adm-subnav" aria-label="Navigation administration">
+    <a href="{{ path('admin_dashboard') }}"
+       class="adm-subnav__item {{ app.request.attributes.get('_route') == 'admin_dashboard' ? 'is-active' }}">
+        Vue d'ensemble
+    </a>
+    <a href="{{ path('admin_candidats') }}"
+       class="adm-subnav__item {{ app.request.attributes.get('_route') == 'admin_candidats' ? 'is-active' }}">
+        Dossiers
+    </a>
+    <span class="adm-subnav__sep"></span>
+    <a href="{{ path('admin_export_csv') }}" class="adm-subnav__action">
+        Exporter CSV
+    </a>
+</nav>
+
+{# ── Contenu principal ────────────────────────────────────────────────────── #}
+<div class="adm-content">
 
     {# Flash messages #}
     {% for label, messages in app.flashes %}
-        <div class="rf-flashes">
-            {% for msg in messages %}<div class="rf-flash-item rf-flash-item--{{ label }}">{{ msg }}</div>{% endfor %}
-        </div>
+        {% for msg in messages %}
+            <div class="rf-flash-item rf-flash-item--{{ label }}" style="margin-bottom:12px;">{{ msg }}</div>
+        {% endfor %}
     {% endfor %}
 
-    {# ── Barre d'actions ── #}
-    <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
-        <a href="{{ path('admin_export_csv') }}" class="rf-btn rf-btn--secondary">
-            Exporter en CSV
-        </a>
-        <a href="{{ path('admin_candidats') }}" class="rf-btn rf-btn--primary">
-            Tous les dossiers
-        </a>
-    </div>
-
-    {# ── Statistiques ── #}
-    <div class="rf-stat-grid">
-        <div class="rf-stat-card rf-stat-card--bleu">
-            <span class="rf-stat-card__val">{{ stats.total }}</span>
-            <span class="rf-stat-card__lbl">Dossiers total</span>
+    {# ── KPI ── #}
+    <div class="adm-section-label">Indicateurs de campagne</div>
+    <div class="adm-kpi-grid">
+        <div class="adm-kpi">
+            <span class="adm-kpi__val">{{ stats.total }}</span>
+            <span class="adm-kpi__lbl">Dossiers reçus</span>
         </div>
-        <div class="rf-stat-card rf-stat-card--orange">
-            <span class="rf-stat-card__val">{{ stats.brouillon }}</span>
-            <span class="rf-stat-card__lbl">En cours</span>
+        <div class="adm-kpi">
+            <span class="adm-kpi__val">{{ stats.soumis }}</span>
+            <span class="adm-kpi__lbl">À instruire</span>
         </div>
-        <div class="rf-stat-card rf-stat-card--bleu-ciel">
-            <span class="rf-stat-card__val">{{ stats.soumis }}</span>
-            <span class="rf-stat-card__lbl">Soumis — à traiter</span>
+        <div class="adm-kpi">
+            <span class="adm-kpi__val">{{ stats.valide }}</span>
+            <span class="adm-kpi__lbl">Validés</span>
         </div>
-        <div class="rf-stat-card rf-stat-card--vert">
-            <span class="rf-stat-card__val">{{ stats.valide }}</span>
-            <span class="rf-stat-card__lbl">Validés</span>
+        <div class="adm-kpi adm-kpi--alert">
+            <span class="adm-kpi__val">{{ stats.refuse }}</span>
+            <span class="adm-kpi__lbl">Refusés</span>
         </div>
-        <div class="rf-stat-card rf-stat-card--rouge">
-            <span class="rf-stat-card__val">{{ stats.refuse }}</span>
-            <span class="rf-stat-card__lbl">Refusés</span>
+        <div class="adm-kpi">
+            <span class="adm-kpi__val">{{ stats.brouillon }}</span>
+            <span class="adm-kpi__lbl">En cours</span>
         </div>
-        <div class="rf-stat-card rf-stat-card--violet">
-            <span class="rf-stat-card__val">{{ nbUsers }}</span>
-            <span class="rf-stat-card__lbl">Comptes créés</span>
+        <div class="adm-kpi">
+            <span class="adm-kpi__val">{{ nbUsers }}</span>
+            <span class="adm-kpi__lbl">Comptes créés</span>
         </div>
     </div>
 
-    {# ── Graphiques / listes ── #}
-    <div class="rf-layout-2col">
+    {# ── Layout 2 colonnes ── #}
+    <div class="adm-2col">
 
-        {# Répartition BTS #}
-        <div class="rf-card">
-            <div class="rf-card__head"><h2>Répartition par BTS</h2></div>
-            <div class="rf-card__body" style="padding:0;">
-                {% if stats.par_bts|length > 0 %}
-                    {% set mx = stats.par_bts|map(r => r.nb)|max %}
-                    {% for row in stats.par_bts %}
-                    <div style="padding:14px 20px;border-bottom:1px solid var(--rf-gris-200);">
-                        <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px;">
-                            <strong>{{ row.bts }}</strong>
-                            <span style="color:var(--rf-gris-425);">{{ row.nb }} dossier{{ row.nb > 1 ? 's' }}</span>
-                        </div>
-                        <div class="rf-progress__track">
-                            <div class="rf-progress__fill" style="width:{{ (row.nb / mx * 100)|round }}%"></div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <p style="padding:24px;color:var(--rf-gris-425);text-align:center;font-size:14px;">
-                        Aucune donnée disponible.
-                    </p>
-                {% endif %}
-            </div>
-        </div>
+        {# Derniers dossiers #}
+        <div>
+            <div class="adm-section-label">Derniers dossiers soumis</div>
+            <div class="adm-card">
+                <div class="adm-card__head">
+                    <h2>Dossiers récents</h2>
+                    <a href="{{ path('admin_candidats') }}" class="adm-card__link">
+                        Voir tout
+                    </a>
+                </div>
 
-        {# Dernières inscriptions #}
-        <div class="rf-card">
-            <div class="rf-card__head">
-                <h2>Dernières inscriptions (7&nbsp;j)</h2>
-                <a href="{{ path('admin_candidats') }}" style="font-size:12.5px;color:var(--rf-bleu);">
-                    Voir tout →
-                </a>
-            </div>
-            <div class="rf-card__body" style="padding:0;">
+                {# En-tête tableau #}
+                <div class="adm-row adm-row--head">
+                    <span></span>
+                    <span>Candidat</span>
+                    <span>Formation</span>
+                    <span>Avancement</span>
+                    <span>Statut</span>
+                    <span>Soumis</span>
+                </div>
+
                 {% if recents|length > 0 %}
                     {% for d in recents %}
-                    <a href="{{ path('admin_dossier_show', {id: d.id}) }}"
-                       class="rf-admin-row">
+                    <a href="{{ path('admin_dossier_show', {id: d.id}) }}" class="adm-row">
+                        <span class="adm-row__num">#{{ d.id }}</span>
                         <div>
-                            <p class="rf-admin-row__name">
-                                {{ d.nom ?? '—' }} {{ d.prenom ?? '' }}
-                            </p>
-                            <p class="rf-admin-row__email">{{ d.user.email }}</p>
+                            <p class="adm-row__name">{{ d.nom ? d.nom|upper : '—' }} {{ d.prenom ?? '' }}</p>
+                            <p class="adm-row__email">{{ d.user.email }}</p>
                         </div>
-                        <div style="text-align:right;flex-shrink:0;">
-                            <span class="rf-badge rf-badge--{{ d.statut == 'brouillon' ? 'draft' : (d.statut == 'soumis' ? 'pending' : (d.statut == 'valide' ? 'ok' : 'refused')) }}">
-                                {{ d.statutLabel }}
-                            </span>
-                            <p style="font-size:11px;color:var(--rf-gris-425);margin-top:3px;">
-                                {{ d.createdAt|date('d/m/Y') }}
-                            </p>
+                        <span class="adm-row__bts">{{ d.btsChoisi ?? '—' }}</span>
+                        <div class="adm-prog">
+                            <div class="adm-prog__bar">
+                                <div class="adm-prog__fill" style="width:{{ (d.etapeActuelle / 5 * 100)|round }}%"></div>
+                            </div>
+                            <span class="adm-prog__txt">{{ d.etapeActuelle }}/5</span>
                         </div>
+                        <span class="adm-badge adm-badge--{{ d.statut == 'brouillon' ? 'draft' : (d.statut == 'soumis' ? 'pending' : (d.statut == 'valide' ? 'ok' : 'refused')) }}">
+                            {{ d.statutLabel }}
+                        </span>
+                        <span class="adm-row__date">
+                            {{ d.soumisAt ? d.soumisAt|date('d/m/Y') : d.updatedAt|date('d/m/Y') }}
+                        </span>
                     </a>
                     {% endfor %}
                 {% else %}
-                    <p style="padding:24px;color:var(--rf-gris-425);text-align:center;font-size:14px;">
-                        Aucune inscription cette semaine.
-                    </p>
+                    <p class="adm-empty">Aucune inscription cette semaine.</p>
                 {% endif %}
             </div>
         </div>
 
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+            {# Répartition BTS #}
+            <div>
+                <div class="adm-section-label">Répartition par formation</div>
+                <div class="adm-card">
+                    <div class="adm-card__head"><h2>BTS demandés</h2></div>
+
+                    {% if stats.par_bts|length > 0 %}
+                        {# Calcul du max (|max inexistant en Twig) #}
+                        {% set mx = 1 %}
+                        {% for row in stats.par_bts %}
+                            {% if row.nb > mx %}{% set mx = row.nb %}{% endif %}
+                        {% endfor %}
+
+                        {% for row in stats.par_bts %}
+                        <div class="adm-bts-row">
+                            <span class="adm-bts-row__name">{{ row.bts }}</span>
+                            <div class="adm-bts-row__bar-wrap">
+                                <div class="adm-bts-row__bar"
+                                     style="width:{{ (row.nb / mx * 100)|round }}%"></div>
+                            </div>
+                            <span class="adm-bts-row__count">{{ row.nb }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="adm-empty">Aucune donnée disponible.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Échéances #}
+            <div>
+                <div class="adm-section-label">Échéances</div>
+                <div class="adm-card">
+                    {% for echeance in echeances ?? [] %}
+                    <div class="adm-agenda">
+                        <div class="adm-agenda__date">
+                            <span class="adm-agenda__day">{{ echeance.date|date('d') }}</span>
+                            <span class="adm-agenda__month">{{ echeance.date|date('M')|lower }}</span>
+                        </div>
+                        <div class="adm-agenda__info">
+                            <p class="adm-agenda__title">{{ echeance.titre }}</p>
+                            <p class="adm-agenda__sub">{{ echeance.description }}</p>
+                        </div>
+                        <span class="adm-chip adm-chip--{{ echeance.urgent ? 'alert' : 'info' }}">
+                            {{ echeance.label }}
+                        </span>
+                    </div>
+                    {% else %}
+                    <p class="adm-empty">Aucune échéance configurée.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
     </div>
+
 </div>
 
 <style>
-/* ── Stat cards ────────────────────────────────────────────────────────────── */
-.rf-stat-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
-}
-@media (max-width: 860px) { .rf-stat-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 500px) { .rf-stat-grid { grid-template-columns: 1fr; } }
-
-.rf-stat-card {
-    border-radius: var(--rf-radius);
-    padding: 20px 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    border: 1px solid transparent;
-}
-.rf-stat-card__val { font-size: 2rem; font-weight: 800; line-height: 1; }
-.rf-stat-card__lbl { font-size: 12.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
-
-.rf-stat-card--bleu       { background: var(--rf-bleu-clair); border-color: var(--rf-bleu-border); color: var(--rf-bleu); }
-.rf-stat-card--orange     { background: var(--rf-orange-clair); border-color: #f4c49a; color: var(--rf-orange); }
-.rf-stat-card--bleu-ciel  { background: #e0f2fe; border-color: #bae6fd; color: #0369a1; }
-.rf-stat-card--vert       { background: var(--rf-vert-clair); border-color: #a5e7be; color: var(--rf-vert); }
-.rf-stat-card--rouge      { background: #ffe9e9; border-color: #ffb3b3; color: #c0000a; }
-.rf-stat-card--violet     { background: #f3e8ff; border-color: #d8b4fe; color: #6b21a8; }
-
-/* ── Ligne liste récente ───────────────────────────────────────────────────── */
-.rf-admin-row {
+/* ── Topbar ───────────────────────────────────────────────────────────────── */
+.adm-topbar {
+    background: var(--rf-blanc);
+    border-bottom: 1px solid var(--rf-gris-200);
+    padding: 12px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 12px 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.adm-topbar__left  { display: flex; align-items: center; gap: 12px; }
+.adm-topbar__title { font-size: 13.5px; font-weight: 700; color: var(--rf-gris-900); margin: 0 0 2px; }
+.adm-topbar__sub   { font-size: 11px; color: var(--rf-gris-425); margin: 0; }
+.adm-topbar__right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.adm-topbar__user  { font-size: 12px; color: var(--rf-gris-625); }
+
+.adm-flag { display: flex; height: 18px; border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+.adm-flag span { width: 11px; height: 18px; }
+.adm-flag span:nth-child(1) { background: #002395; }
+.adm-flag span:nth-child(2) { background: #fff; border-left: 0.5px solid var(--rf-gris-200); border-right: 0.5px solid var(--rf-gris-200); }
+.adm-flag span:nth-child(3) { background: #ED2939; }
+
+/* ── Chips ────────────────────────────────────────────────────────────────── */
+.adm-chip {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: var(--rf-radius);
+    background: var(--rf-gris-100);
+    color: var(--rf-gris-625);
+    border: 0.5px solid var(--rf-gris-200);
+    white-space: nowrap;
+}
+.adm-chip--info  { background: var(--rf-bleu-clair); color: var(--rf-bleu); border-color: var(--rf-bleu-border); }
+.adm-chip--alert { background: #ffe9e9; color: #a32d2d; border-color: #ffb3b3; }
+
+/* ── Sous-navigation ──────────────────────────────────────────────────────── */
+.adm-subnav {
+    background: var(--rf-blanc);
     border-bottom: 1px solid var(--rf-gris-200);
+    padding: 0 24px;
+    display: flex;
+    align-items: stretch;
+}
+.adm-subnav__item {
+    font-size: 12.5px;
+    padding: 10px 14px;
+    color: var(--rf-gris-625);
+    border-bottom: 2px solid transparent;
+    text-decoration: none;
+    transition: color .12s, border-color .12s;
+    white-space: nowrap;
+}
+.adm-subnav__item:hover { color: var(--rf-gris-900); border-bottom-color: var(--rf-gris-200); }
+.adm-subnav__item.is-active { color: var(--rf-bleu); border-bottom-color: var(--rf-bleu); font-weight: 700; }
+.adm-subnav__sep { flex: 1; }
+.adm-subnav__action {
+    font-size: 12px;
+    padding: 10px 14px;
+    color: var(--rf-bleu);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ── Contenu ──────────────────────────────────────────────────────────────── */
+.adm-content { padding: 20px 24px 48px; display: flex; flex-direction: column; gap: 20px; }
+.adm-section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--rf-gris-425);
+    margin-bottom: 10px;
+}
+
+/* ── KPI ──────────────────────────────────────────────────────────────────── */
+.adm-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 4px;
+}
+@media (max-width: 900px) { .adm-kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 500px) { .adm-kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.adm-kpi {
+    background: var(--rf-blanc);
+    border: 0.5px solid var(--rf-gris-200);
+    border-radius: var(--rf-radius);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.adm-kpi--alert { border-color: #f0997b; }
+.adm-kpi--alert .adm-kpi__val { color: #a32d2d; }
+.adm-kpi__val { font-size: 22px; font-weight: 700; color: var(--rf-gris-900); line-height: 1; }
+.adm-kpi__lbl { font-size: 11px; color: var(--rf-gris-425); margin-top: 4px; }
+
+/* ── 2 colonnes ───────────────────────────────────────────────────────────── */
+.adm-2col {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+@media (max-width: 860px) { .adm-2col { grid-template-columns: 1fr; } }
+
+/* ── Carte ────────────────────────────────────────────────────────────────── */
+.adm-card {
+    background: var(--rf-blanc);
+    border: 0.5px solid var(--rf-gris-200);
+    border-radius: var(--rf-radius);
+    overflow: hidden;
+}
+.adm-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 0.5px solid var(--rf-gris-200);
+    background: var(--rf-gris-50);
+}
+.adm-card__head h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--rf-gris-900);
+    margin: 0;
+}
+.adm-card__link {
+    font-size: 12px;
+    color: var(--rf-bleu);
+    text-decoration: none;
+}
+.adm-card__link:hover { text-decoration: underline; }
+
+/* ── Tableau dossiers ─────────────────────────────────────────────────────── */
+.adm-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 100px 80px 90px 70px;
+    gap: 8px;
+    align-items: center;
+    padding: 9px 16px;
+    border-bottom: 0.5px solid var(--rf-gris-200);
+    font-size: 12.5px;
     text-decoration: none;
     color: inherit;
-    transition: background .12s;
+    transition: background .1s;
 }
-.rf-admin-row:last-child { border-bottom: none; }
-.rf-admin-row:hover { background: var(--rf-gris-50); }
-.rf-admin-row__name  { font-size: 13.5px; font-weight: 700; margin: 0 0 2px; color: var(--rf-gris-900); }
-.rf-admin-row__email { font-size: 11.5px; color: var(--rf-gris-425); margin: 0; }
+.adm-row:last-child { border-bottom: none; }
+.adm-row--head {
+    background: var(--rf-gris-50);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--rf-gris-425);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 7px 16px;
+}
+.adm-row:not(.adm-row--head):hover { background: var(--rf-gris-50); cursor: pointer; }
+.adm-row__num   { font-size: 11px; color: var(--rf-gris-425); }
+.adm-row__name  { font-size: 12.5px; font-weight: 700; color: var(--rf-gris-900); margin: 0 0 1px; }
+.adm-row__email { font-size: 11px; color: var(--rf-gris-425); margin: 0; }
+.adm-row__bts   { font-size: 12.5px; color: var(--rf-gris-800); }
+.adm-row__date  { font-size: 11px; color: var(--rf-gris-425); }
+
+/* ── Barre de progression ─────────────────────────────────────────────────── */
+.adm-prog { display: flex; align-items: center; gap: 5px; }
+.adm-prog__bar { flex: 1; height: 3px; background: var(--rf-gris-200); border-radius: 2px; overflow: hidden; }
+.adm-prog__fill { height: 100%; border-radius: 2px; background: var(--rf-bleu); }
+.adm-prog__txt { font-size: 10px; color: var(--rf-gris-425); white-space: nowrap; }
+
+/* ── Badges ───────────────────────────────────────────────────────────────── */
+.adm-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--rf-radius);
+    white-space: nowrap;
+    border: 0.5px solid transparent;
+}
+.adm-badge--draft   { background: var(--rf-gris-100);  color: var(--rf-gris-625); border-color: var(--rf-gris-200); }
+.adm-badge--pending { background: #faeeda;              color: #854f0b;             border-color: #fac775; }
+.adm-badge--ok      { background: #eaf3de;              color: #3b6d11;             border-color: #c0dd97; }
+.adm-badge--refused { background: #fcebeb;              color: #a32d2d;             border-color: #f7c1c1; }
+
+/* ── BTS barres ───────────────────────────────────────────────────────────── */
+.adm-bts-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    border-bottom: 0.5px solid var(--rf-gris-200);
+}
+.adm-bts-row:last-child { border-bottom: none; }
+.adm-bts-row__name     { width: 80px; font-size: 12px; font-weight: 700; color: var(--rf-gris-900); flex-shrink: 0; }
+.adm-bts-row__bar-wrap { flex: 1; height: 5px; background: var(--rf-gris-100); border-radius: 3px; overflow: hidden; }
+.adm-bts-row__bar      { height: 100%; border-radius: 3px; background: var(--rf-bleu); }
+.adm-bts-row__count    { font-size: 11.5px; color: var(--rf-gris-625); width: 28px; text-align: right; flex-shrink: 0; }
+
+/* ── Agenda ───────────────────────────────────────────────────────────────── */
+.adm-agenda {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 0.5px solid var(--rf-gris-200);
+}
+.adm-agenda:last-child { border-bottom: none; }
+.adm-agenda__date  { width: 36px; text-align: center; flex-shrink: 0; }
+.adm-agenda__day   { display: block; font-size: 18px; font-weight: 700; color: var(--rf-gris-900); line-height: 1; }
+.adm-agenda__month { display: block; font-size: 10px; color: var(--rf-gris-425); text-transform: uppercase; letter-spacing: .06em; }
+.adm-agenda__info  { flex: 1; }
+.adm-agenda__title { font-size: 12.5px; font-weight: 700; color: var(--rf-gris-900); margin: 0 0 2px; }
+.adm-agenda__sub   { font-size: 11px; color: var(--rf-gris-425); margin: 0; }
+
+/* ── Vide ─────────────────────────────────────────────────────────────────── */
+.adm-empty { padding: 20px; color: var(--rf-gris-425); font-size: 13.5px; text-align: center; }
 </style>
 
 {% endblock %}
