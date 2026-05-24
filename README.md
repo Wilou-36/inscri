@@ -79,6 +79,7 @@ bts_fulbert/
 │   │   ├── Dossier.php
 │   │   └── PieceJustificative.php
 │   ├── Controller/
+|   |   ├── AdminController.php
 │   │   ├── SecurityController.php
 │   │   ├── InscriptionController.php
 │   │   └── DashboardController.php
@@ -89,11 +90,10 @@ bts_fulbert/
 │   │   ├── Step3BtsType.php
 │   │   ├── Step4PiecesType.php
 │   │   └── Step5RecapType.php
-│   ├── Repository/
-│   │   ├── UserRepository.php
-│   │   └── DossierRepository.php
-│   └── Security/
-│       └── AppAuthenticator.php
+│   └──Repository/
+│       ├── UserRepository.php
+│       └── DossierRepository.php
+|
 ├── templates/
 │   ├── base.html.twig
 │   ├── security/
@@ -105,6 +105,13 @@ bts_fulbert/
 │   │   ├── step3.html.twig
 │   │   ├── step4.html.twig
 │   │   └── step5.html.twig
+│   ├── admin/
+│   │   ├── dashboard.html.twig
+│   │   ├── dossier_show.html.twig
+│   │   └── candidats.html.twig
+│   ├── legal/
+│   │   ├── ggu.html.twig
+│   │   └── privacy.html.twig
 │   └── dashboard/
 │       └── index.html.twig
 ├── config/
@@ -169,21 +176,6 @@ Crtl + clic
     )
 
 ## 📁 Upload des fichiers
-
-Créer le dossier :
-
-```bash
-mkdir public/uploads
-```
-
-Dans `services.yaml` :
-
-```yaml
-parameters:
-    uploads_directory: '%kernel.project_dir%/public/uploads'
-```
-
----
 
 ## 🔄 Workflow utilisateur
 
